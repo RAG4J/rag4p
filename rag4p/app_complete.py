@@ -2,6 +2,8 @@ import numpy as np
 
 from rag4p.connectopenai.openai_answer_generator import OpenaiAnswerGenerator
 from rag4p.connectopenai.openai_embedder import OpenAIEmbedder
+from rag4p.connectweaviate.access_weaviate import AccessWeaviate
+from rag4p.connectweaviate.weaviate_retriever import WeaviateRetriever
 from rag4p.generation.observed_answer_generator import ObservedAnswerGenerator
 from rag4p.indexing.SentenceSplitter import SentenceSplitter
 from rag4p.indexing.indexing_service import IndexingService
@@ -20,12 +22,19 @@ if __name__ == '__main__':
     load_dotenv()
 
     key_loader = KeyLoader()
+
+    # Using the internal content store with the local embedder
     embedder = OnnxEmbedder()
-    # embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
     retriever = InternalContentRetriever(internal_content_store=content_store)
+
+    # When using Weaviate, we do not need to index, that is done separately
+    # Don't forget to close the client at the end of the script
+    # embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
+    # weaviate_client = AccessWeaviate(url=key_loader.get_weaviate_url(), access_key=key_loader.get_weaviate_api_key())
+    # retriever = WeaviateRetriever(weaviate_access=weaviate_client, embedder=embedder)
 
     openai_answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key())
     answer_generator = ObservedAnswerGenerator(answer_generator=openai_answer_generator)
@@ -71,3 +80,5 @@ if __name__ == '__main__':
     print("\n----------------------------------")
     print(f"Question Quality: {np.mean(answer_question_quality)}")
     print(f"Context Quality: {np.mean(answer_context_quality)}")
+
+    # weaviate_client.close()
