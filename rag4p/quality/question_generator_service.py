@@ -1,18 +1,20 @@
+from __future__ import annotations
+
 import csv
 import os
 
 from openai import OpenAI
 
+from rag4p.connectopenai import DEFAULT_MODEL
+from rag4p.generation.question_generator import QuestionGenerator
 from rag4p.retrieval.retriever import Retriever
 
 
 class QuestionGeneratorService:
 
-    def __init__(self, openai_key: str, retriever: Retriever):
-        self.openai_client = OpenAI(
-            api_key=openai_key,
-        )
+    def __init__(self, retriever: Retriever, question_generator: QuestionGenerator):
         self.retriever = retriever
+        self.question_generator = question_generator
 
     def generate_question_answer_pairs(self, file_name: str):
         directory = os.getcwd()  # get current working directory
@@ -42,20 +44,4 @@ class QuestionGeneratorService:
         :param context: The context to generate a question from.
         :return: The generated question.
         """
-        completion = self.openai_client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system",
-                 "content": "You are a content writer reading a text and writing questions that are answered in that "
-                            "text. Use the context as provided and nothing else to come up with one question. The "
-                            "question should be a question that a person that does not know a lot about the context "
-                            "could ask. Do not use names in your question or exact dates. Do not use the exact words "
-                            "in the context. Each question must be one sentence only end always end with a '?' "
-                            "character. The context is provided after 'context:'. The result should only contain the "
-                            "generated question, nothing else."},
-                {"role": "user",
-                 "content": f"Context: {context}\nGenerated Question:"},
-            ],
-            stream=False,
-        )
-        return completion.choices[0].message.content
+        return self.question_generator.generate_question(context)

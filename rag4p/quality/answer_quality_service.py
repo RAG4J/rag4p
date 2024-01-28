@@ -1,5 +1,6 @@
 from openai import OpenAI
 
+from rag4p.connectopenai import DEFAULT_MODEL
 from rag4p.quality.answer_from_context_quality import AnswerFromContextQuality
 from rag4p.quality.answer_quality import AnswerQuality
 from rag4p.quality.answer_to_question_quality import AnswerToQuestionQuality
@@ -7,7 +8,7 @@ from rag4p.tracker.rag_observer import RAGObserver
 
 
 class AnswerQualityService:
-    def __init__(self, openai_api_key: str):
+    def __init__(self, openai_api_key: str, openai_model: str = DEFAULT_MODEL):
         self.openai_client = OpenAI(
             api_key=openai_api_key,
         )

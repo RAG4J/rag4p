@@ -1,3 +1,5 @@
+from rag4p.connectopenai import MODEL_GPT4_TURBO
+from rag4p.connectopenai.openai_question_generator import OpenAIQuestionGenerator
 from rag4p.indexing.SentenceSplitter import SentenceSplitter
 from rag4p.indexing.indexing_service import IndexingService
 from rag4p.onnxembedder.onnx_embedder import OnnxEmbedder
@@ -9,6 +11,7 @@ from rag4p.vasa_content_reader import VasaContentReader
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
+
     load_dotenv()
 
     key_loader = KeyLoader()
@@ -18,8 +21,10 @@ if __name__ == '__main__':
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
     retriever = InternalContentRetriever(internal_content_store=content_store)
 
-    question_generator_service = QuestionGeneratorService(openai_key=key_loader.get_openai_api_key(),
-                                                          retriever=retriever)
+    question_generator = OpenAIQuestionGenerator(openai_api_key=key_loader.get_openai_api_key(),
+                                                 openai_model=MODEL_GPT4_TURBO)
+
+    question_generator_service = QuestionGeneratorService(retriever=retriever,
+                                                          question_generator=question_generator)
 
     question_generator_service.generate_question_answer_pairs(file_name="questions_answers.csv")
-
