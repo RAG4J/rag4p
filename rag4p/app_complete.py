@@ -24,17 +24,17 @@ if __name__ == '__main__':
     key_loader = KeyLoader()
 
     # Using the internal content store with the local embedder
-    embedder = OnnxEmbedder()
-    content_store = InternalContentStore(embedder=embedder)
-    indexing_service = IndexingService(content_store=content_store)
-    indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
-    retriever = InternalContentRetriever(internal_content_store=content_store)
+    # embedder = OnnxEmbedder()
+    # content_store = InternalContentStore(embedder=embedder)
+    # indexing_service = IndexingService(content_store=content_store)
+    # indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
+    # retriever = InternalContentRetriever(internal_content_store=content_store)
 
     # When using Weaviate, we do not need to index, that is done separately
     # Don't forget to close the client at the end of the script
-    # embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
-    # weaviate_client = AccessWeaviate(url=key_loader.get_weaviate_url(), access_key=key_loader.get_weaviate_api_key())
-    # retriever = WeaviateRetriever(weaviate_access=weaviate_client, embedder=embedder)
+    embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
+    weaviate_client = AccessWeaviate(url=key_loader.get_weaviate_url(), access_key=key_loader.get_weaviate_api_key())
+    retriever = WeaviateRetriever(weaviate_access=weaviate_client, embedder=embedder)
 
     openai_answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key())
     answer_generator = ObservedAnswerGenerator(answer_generator=openai_answer_generator)
@@ -69,11 +69,11 @@ if __name__ == '__main__':
 
         quality = answer_quality_service.determine_quality_answer_related_to_question(rag_observer=rag_observer)
         answer_question_quality.append(quality.quality)
-        print(f"Quality: {quality.quality}, Reason: {quality.reason}")
+        print(f"Answer to Question Quality: {quality.quality}, Reason: {quality.reason}")
 
         quality = answer_quality_service.determine_quality_answer_from_context(rag_observer=rag_observer)
         answer_context_quality.append(quality.quality)
-        print(f"Quality: {quality.quality}, Reason: {quality.reason}")
+        print(f"Answer from Context Quality: {quality.quality}, Reason: {quality.reason}")
 
         rag_observer.reset()
 
@@ -81,4 +81,4 @@ if __name__ == '__main__':
     print(f"Question Quality: {np.mean(answer_question_quality)}")
     print(f"Context Quality: {np.mean(answer_context_quality)}")
 
-    # weaviate_client.close()
+    weaviate_client.close()

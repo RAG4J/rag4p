@@ -1,5 +1,5 @@
 from rag4p.connectopenai.openai_embedder import OpenAIEmbedder
-from rag4p.connectweaviate import chunk_collection
+from rag4p.connectweaviate import chunk_collection, CLASS_NAME
 from rag4p.connectweaviate.access_weaviate import AccessWeaviate
 from rag4p.connectweaviate.weaviate_content_store import WeaviateContentStore
 from rag4p.indexing.SentenceSplitter import SentenceSplitter
@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     key_loader = KeyLoader()
     access_weaviate = AccessWeaviate(url=key_loader.get_weaviate_url(), access_key=key_loader.get_weaviate_api_key())
-    access_weaviate.force_create_collection(collection_name="Chunk", properties=chunk_collection.properties)
+    access_weaviate.force_create_collection(collection_name=CLASS_NAME, properties=chunk_collection.properties)
 
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
     content_store = WeaviateContentStore(weaviate_access=access_weaviate,embedder=embedder)

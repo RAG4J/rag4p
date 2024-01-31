@@ -1,6 +1,9 @@
 import uuid
 
 import weaviate
+import weaviate.classes as wvc
+
+from rag4p.connectweaviate import CLASS_NAME
 
 
 class AccessWeaviate:
@@ -33,7 +36,12 @@ class AccessWeaviate:
     def create_collection(self, collection_name: str, properties: list):
         self.client.collections.create(
             name=collection_name,
-            properties=properties
+            properties=properties,
+            vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(
+                model="ada",
+                model_version="002",
+                type_="text",
+            )
         )
 
     def force_create_collection(self, collection_name: str, properties: list):
@@ -48,3 +56,7 @@ class AccessWeaviate:
     def print_meta(self):
         meta = self.client.get_meta()
         print(f"Version: {meta['version']}")
+        collections = self.client.collections.list_all(simple=False)
+        for collection in collections:
+            print(f"Available collection: {collection}")
+        print(self.client.collections.export_config(name=CLASS_NAME))

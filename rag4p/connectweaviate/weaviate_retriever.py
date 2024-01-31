@@ -2,6 +2,7 @@ from weaviate.classes import Filter
 from weaviate.collections import Collection
 import weaviate.classes as wvc
 
+from rag4p.connectweaviate import CLASS_NAME
 from rag4p.connectweaviate.access_weaviate import AccessWeaviate
 from rag4p.domain.chunk import Chunk
 from rag4p.domain.relevant_chunk import RelevantChunk
@@ -63,4 +64,4 @@ class WeaviateRetriever(Retriever):
         )
 
     def __chunk_collection(self) -> Collection:
-        return self.weaviate_access.client.collections.get("Chunk")
+        return self.weaviate_access.client.collections.get(CLASS_NAME)

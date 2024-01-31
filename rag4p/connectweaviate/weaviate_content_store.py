@@ -1,5 +1,6 @@
 from typing import List
 
+from rag4p.connectweaviate import CLASS_NAME
 from rag4p.connectweaviate.access_weaviate import AccessWeaviate
 from rag4p.domain.chunk import Chunk
 from rag4p.indexing.content_store import ContentStore
@@ -22,7 +23,7 @@ class WeaviateContentStore(ContentStore):
             }
 
             self.weaviate_access.add_document(
-                collection_name="Chunk",
+                collection_name=CLASS_NAME,
                 properties=properties,
                 vector=self.embedder.embed(chunk.chunk_text)
             )

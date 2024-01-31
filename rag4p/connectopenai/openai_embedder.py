@@ -10,6 +10,7 @@ class OpenAIEmbedder(Embedder):
     https://platform.openai.com/docs/models/embeddings. At the moment the default model is text-embedding-3-small.
     Before that text-embedding-ada-002 was used.
     """
+
     def __init__(self, api_key: str, embedding_model: str = EMBEDDING_SMALL):
         self.client = OpenAI(
             # This is the default and can be omitted
@@ -19,7 +20,7 @@ class OpenAIEmbedder(Embedder):
         self.embedding_model = embedding_model
 
     def embed(self, text: str) -> [float]:
-        response = self.client.embeddings.create(input=text,model="text-embedding-ada-002", encoding_format="float")
+        response = self.client.embeddings.create(input=text, model=self.embedding_model, encoding_format="float")
         embeddings = response.data
 
         return embeddings[0].embedding
