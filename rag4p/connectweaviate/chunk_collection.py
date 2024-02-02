@@ -1,4 +1,4 @@
-import weaviate.classes as wvc
+import weaviate.classes.config as wvc
 
 properties = [
     wvc.Property(name="documentId",

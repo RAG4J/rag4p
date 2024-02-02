@@ -1,6 +1,6 @@
-from weaviate.classes import Filter
 from weaviate.collections import Collection
 import weaviate.classes as wvc
+from weaviate.collections.classes.filters import Filter
 
 from rag4p.connectweaviate import CLASS_NAME
 from rag4p.connectweaviate.access_weaviate import AccessWeaviate
