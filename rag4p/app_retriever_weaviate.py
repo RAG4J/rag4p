@@ -5,6 +5,7 @@ from rag4p.util.key_loader import KeyLoader
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
+
     load_dotenv()
 
     key_loader = KeyLoader()
@@ -14,7 +15,9 @@ if __name__ == '__main__':
     client.print_meta()
 
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
-    retriever = WeaviateRetriever(weaviate_access=client, embedder=embedder)
+    retriever = WeaviateRetriever(weaviate_access=client,
+                                  embedder=embedder,
+                                  additional_properties=["title", "timerange"])
 
     for chunk in retriever.loop_over_chunks():
         print(f"Document: {chunk.document_id} - {chunk.chunk_id}")
@@ -29,6 +32,7 @@ if __name__ == '__main__':
     for chunk in relevant_chunks:
         print(f"Document: {chunk.document_id}")
         print(f"Chunk id: {chunk.chunk_id}")
+        print(f"Title: {chunk.properties['title']}")
         print(f"Text: {chunk.chunk_text}")
         print(f"Score: {chunk.score}")
         print("--------------------------------------------------")
