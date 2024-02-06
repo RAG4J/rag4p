@@ -19,8 +19,11 @@ class WeaviateContentStore(ContentStore):
                 "documentId": chunk.document_id,
                 "chunkId": chunk.chunk_id,
                 "text": chunk.chunk_text,
-                "totalChunks": len(chunks)
+                "totalChunks": len(chunks),
             }
+
+            for key, value in chunk.properties.items():
+                properties[key] = value
 
             self.weaviate_access.add_document(
                 collection_name=CLASS_NAME,

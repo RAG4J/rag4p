@@ -12,9 +12,13 @@ from rag4p.retrieval.retriever import Retriever
 
 class WeaviateRetriever(Retriever):
 
-    def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder):
+    def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder, additional_properties=None):
+        if additional_properties is None:
+            additional_properties = []
+
         self.weaviate_access = weaviate_access
         self.embedder = embedder
+        self.additional_properties = additional_properties
 
     def find_relevant_chunks(self, question: str, max_results: int = 4) -> [RelevantChunk]:
         vector = self.embedder.embed(question)
@@ -24,12 +28,16 @@ class WeaviateRetriever(Retriever):
 
         relevant_chunks = []
         for chunk in result.objects:
+            properties = {}
+            for key in self.additional_properties:
+                properties[key] = chunk.properties[key]
+
             relevant_chunks.append(RelevantChunk(
                 document_id=chunk.properties["documentId"],
                 chunk_id=chunk.properties["chunkId"],
                 text=chunk.properties["text"],
                 total_chunks=chunk.properties["totalChunks"],
-                properties={},
+                properties=properties,
                 score=chunk.metadata.distance,
             ))
         return relevant_chunks
@@ -42,12 +50,16 @@ class WeaviateRetriever(Retriever):
             raise Exception(f"Chunk with documentId {document_id} and chunkId {chunk_id} not found")
         chunk = chunk.objects[0]
 
+        properties = {}
+        for key in self.additional_properties:
+            properties[key] = chunk.properties[key]
+
         return Chunk(
             document_id=chunk.properties["documentId"],
             chunk_id=chunk.properties["chunkId"],
             chunk_text=chunk.properties["text"],
             total_chunks=chunk.properties["totalChunks"],
-            properties={},
+            properties=properties,
         )
 
     def loop_over_chunks(self):
@@ -55,12 +67,16 @@ class WeaviateRetriever(Retriever):
             yield from self.__extract_chunk(chunk)
 
     def __extract_chunk(self, chunk):
+        properties = {}
+        for key in self.additional_properties:
+            properties[key] = chunk.properties[key]
+
         yield Chunk(
             document_id=chunk.properties["documentId"],
             chunk_id=chunk.properties["chunkId"],
             chunk_text=chunk.properties["text"],
             total_chunks=chunk.properties["totalChunks"],
-            properties={},
+            properties=properties
         )
 
     def __chunk_collection(self) -> Collection:
