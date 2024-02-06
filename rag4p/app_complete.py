@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Don't forget to close the client at the end of the script
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
     weaviate_client = AccessWeaviate(url=key_loader.get_weaviate_url(), access_key=key_loader.get_weaviate_api_key())
-    retriever = WeaviateRetriever(weaviate_access=weaviate_client, embedder=embedder)
+    retriever = WeaviateRetriever(weaviate_access=weaviate_client, embedder=embedder, hybrid=False)
 
     openai_answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key())
     answer_generator = ObservedAnswerGenerator(answer_generator=openai_answer_generator)

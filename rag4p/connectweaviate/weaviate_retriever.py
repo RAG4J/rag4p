@@ -12,19 +12,31 @@ from rag4p.retrieval.retriever import Retriever
 
 class WeaviateRetriever(Retriever):
 
-    def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder, additional_properties=None):
+    def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder, additional_properties=None,
+                 hybrid: bool = False):
         if additional_properties is None:
             additional_properties = []
 
         self.weaviate_access = weaviate_access
         self.embedder = embedder
         self.additional_properties = additional_properties
+        self.hybrid = hybrid
 
     def find_relevant_chunks(self, question: str, max_results: int = 4) -> [RelevantChunk]:
         vector = self.embedder.embed(question)
-        result = self.__chunk_collection().query.near_vector(near_vector=vector,
-                                                             limit=max_results,
-                                                             return_metadata=wvc.query.MetadataQuery(distance=True))
+        if self.hybrid:
+            result = self.__chunk_collection().query.hybrid(query=question,
+                                                            limit=max_results,
+                                                            alpha=0.5,
+                                                            fusion_type=wvc.query.HybridFusion.RELATIVE_SCORE,
+                                                            vector=vector,
+                                                            return_metadata=wvc.query.MetadataQuery(
+                                                                distance=True, score=True)
+                                                            )
+        else:
+            result = self.__chunk_collection().query.near_vector(near_vector=vector,
+                                                                 limit=max_results,
+                                                                 return_metadata=wvc.query.MetadataQuery(distance=True))
 
         relevant_chunks = []
         for chunk in result.objects:
@@ -32,13 +44,14 @@ class WeaviateRetriever(Retriever):
             for key in self.additional_properties:
                 properties[key] = chunk.properties[key]
 
+            score = chunk.metadata.score if self.hybrid else chunk.metadata.distance
             relevant_chunks.append(RelevantChunk(
                 document_id=chunk.properties["documentId"],
                 chunk_id=chunk.properties["chunkId"],
                 text=chunk.properties["text"],
                 total_chunks=chunk.properties["totalChunks"],
                 properties=properties,
-                score=chunk.metadata.distance,
+                score=score,
             ))
         return relevant_chunks
 

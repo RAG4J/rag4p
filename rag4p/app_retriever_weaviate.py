@@ -17,7 +17,8 @@ if __name__ == '__main__':
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
     retriever = WeaviateRetriever(weaviate_access=client,
                                   embedder=embedder,
-                                  additional_properties=["title", "timerange"])
+                                  additional_properties=["title", "timerange"],
+                                  hybrid=False)
 
     for chunk in retriever.loop_over_chunks():
         print(f"Document: {chunk.document_id} - {chunk.chunk_id}")
