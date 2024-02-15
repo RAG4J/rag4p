@@ -1,10 +1,8 @@
-from rag4p.indexing.SentenceSplitter import SentenceSplitter
+from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.indexing_service import IndexingService
-from rag4p.onnxembedder.onnx_embedder import OnnxEmbedder
-from rag4p.retrieval.topn_retrieval_strategy import TopNRetrievalStrategy
-from rag4p.retrieval.window_retrieval_strategy import WindowRetrievalStrategy
-from rag4p.store.internal_content_retriever import InternalContentRetriever
-from rag4p.store.internal_content_store import InternalContentStore
+from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
+from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
+from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p.util.key_loader import KeyLoader
 from rag4p.vasa_content_reader import VasaContentReader
 
@@ -17,7 +15,6 @@ if __name__ == '__main__':
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
-    retriever = InternalContentRetriever(internal_content_store=content_store)
 
     example_sentences = [
         "How many bolts were replaced?",
@@ -27,8 +24,7 @@ if __name__ == '__main__':
         "Where did the person responsible for building the Vasa ship come from?"
     ]
 
-    # strategy = TopNRetrievalStrategy(retriever=retriever)
-    strategy = WindowRetrievalStrategy(retriever=retriever, window_size=1)
+    strategy = WindowRetrievalStrategy(retriever=content_store, window_size=1)
 
     print("\n\n----------------------------------")
     print(f"Retrieval Strategy {strategy.__class__.__name__}\n")

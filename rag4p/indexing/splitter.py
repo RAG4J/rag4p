@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import List
 
-from rag4p.domain.chunk import Chunk
-from rag4p.domain.input_document import InputDocument
+from rag4p.rag.model.chunk import Chunk
+from rag4p.indexing.input_document import InputDocument
 
 
 class Splitter(ABC):

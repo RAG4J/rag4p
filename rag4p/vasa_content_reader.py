@@ -1,6 +1,6 @@
 import json
 
-from rag4p.domain.input_document import InputDocument
+from rag4p.indexing.input_document import InputDocument
 from rag4p.indexing.content_reader import ContentReader
 
 
