@@ -2,7 +2,7 @@ from weaviate.collections import Collection
 import weaviate.classes as wvc
 from weaviate.collections.classes.filters import Filter
 
-from rag4p.integrations.weaviate import CLASS_NAME
+from rag4p.integrations.weaviate import COLLECTION_NAME
 from rag4p.integrations.weaviate.access_weaviate import AccessWeaviate
 from rag4p.rag.model.chunk import Chunk
 from rag4p.rag.model.relevant_chunk import RelevantChunk
@@ -13,7 +13,7 @@ from rag4p.rag.retrieval.retriever import Retriever
 class WeaviateRetriever(Retriever):
 
     def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder, additional_properties=None,
-                 hybrid: bool = False):
+                 hybrid: bool = False, collection_name: str = COLLECTION_NAME):
         if additional_properties is None:
             additional_properties = []
 
@@ -21,6 +21,7 @@ class WeaviateRetriever(Retriever):
         self.embedder = embedder
         self.additional_properties = additional_properties
         self.hybrid = hybrid
+        self.collection_name = collection_name
 
     def find_relevant_chunks(self, question: str, max_results: int = 4) -> [RelevantChunk]:
         vector = self.embedder.embed(question)
@@ -97,4 +98,4 @@ class WeaviateRetriever(Retriever):
         )
 
     def __chunk_collection(self) -> Collection:
-        return self.weaviate_access.client.collections.get(CLASS_NAME)
+        return self.weaviate_access.client.collections.get(self.collection_name)

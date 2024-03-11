@@ -3,17 +3,23 @@ import uuid
 import weaviate
 import weaviate.classes as wvc
 
-from rag4p.integrations.weaviate import CLASS_NAME
+from rag4p.integrations.weaviate import COLLECTION_NAME
 
 
 class AccessWeaviate:
 
-    def __init__(self, url, access_key):
+    def __init__(self, url, access_key, collection_name: str = COLLECTION_NAME, openai_api_key: str = None):
         print(f"Connecting to Weaviate at {url}")
+        headers = {}
+        if openai_api_key:
+            headers = {"X-OpenAI-Api-Key": openai_api_key}
+
         self.client = weaviate.connect_to_wcs(
             cluster_url=url,
-            auth_credentials=weaviate.auth.AuthApiKey(access_key)
+            auth_credentials=weaviate.auth.AuthApiKey(access_key),
+            headers=headers
         )
+        self.collection_name = collection_name
 
     def does_collection_exist(self, collection_name):
         exists = self.client.collections.exists(collection_name)
@@ -23,7 +29,7 @@ class AccessWeaviate:
 
         return exists
 
-    def add_document(self, collection_name: str,  properties: dict, vector: [float]):
+    def add_document(self, collection_name: str, properties: dict, vector: [float]):
         self.client.collections.get(collection_name).data.insert(
             uuid=uuid.uuid4(),
             properties=properties,
@@ -33,13 +39,12 @@ class AccessWeaviate:
     def delete_collection(self, collection_name: str):
         self.client.collections.delete(collection_name)
 
-    def create_collection(self, collection_name: str, properties: list):
+    def create_collection(self, collection_name: str, properties: list, model: str = "text-embedding-3-small"):
         self.client.collections.create(
             name=collection_name,
             properties=properties,
             vectorizer_config=wvc.config.Configure.Vectorizer.text2vec_openai(
-                model="ada",
-                model_version="002",
+                model=model,
                 type_="text",
             )
         )
@@ -59,4 +64,15 @@ class AccessWeaviate:
         collections = self.client.collections.list_all(simple=False)
         for collection in collections:
             print(f"Available collection: {collection}")
-        print(self.client.collections.export_config(name=CLASS_NAME))
+        print(self.client.collections.export_config(name=self.collection_name))
+
+    def query_collection(self, question: str, max_results: int = 2):
+        print(f"Query collection based on user input {question}")
+        collection = self.client.collections.get(name=self.collection_name)
+        return collection.query.hybrid(query=question,
+                                       limit=max_results,
+                                       alpha=0.5,
+                                       fusion_type=wvc.query.HybridFusion.RELATIVE_SCORE,
+                                       return_metadata=wvc.query.MetadataQuery(
+                                           distance=True, score=True)
+                                       )

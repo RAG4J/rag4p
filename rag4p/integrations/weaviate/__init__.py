@@ -1,1 +1,1 @@
-CLASS_NAME = 'Chunk'
+COLLECTION_NAME = 'Chunk'
