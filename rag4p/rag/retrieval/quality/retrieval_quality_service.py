@@ -28,7 +28,7 @@ def obtain_retrieval_quality(question_answer_records: [QuestionAnswerRecord], re
 
 def read_question_answers_from_file(file_name: str = "questions_answers.csv"):
     directory = os.getcwd()
-    file_path = os.path.join(directory, "../data", file_name)
+    file_path = os.path.join(directory, "data", file_name)
 
     try:
         questions_answers = []

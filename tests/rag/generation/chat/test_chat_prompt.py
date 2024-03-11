@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import patch, mock_open
 from rag4p.rag.generation.chat.chat_prompt import ChatPrompt
@@ -30,7 +31,10 @@ class TestChatPrompt(unittest.TestCase):
         self.assertEqual(result, "Hello, Alice!")
 
     def test_read_user_message_from_file(self):
-        chat_prompt = ChatPrompt(user_message_filename="../../../data/quality_of_answer_from_context_user.txt")
+        directory = os.getcwd()
+        file_path = os.path.join(directory, "data/quality", "quality_of_answer_from_context_user.txt")
+
+        chat_prompt = ChatPrompt(user_message_filename=file_path)
         result = chat_prompt.create_user_message({"answer": "my answer", "context": "provided context"})
         self.assertEqual("Answer: my answer\\nContext: provided context\\nResult:\\n", result)
 
