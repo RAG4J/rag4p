@@ -1,6 +1,6 @@
-from rag4p.integrations.openai.quality.openai_answer_quality_service import OpenAIAnswerQualityService
+from rag4p.integrations.ollama.access_ollama import AccessOllama
+from rag4p.integrations.ollama.quality.ollama_answer_quality_service import OllamaAnswerQualityService
 from rag4p.rag.tracker.rag_observer import RAGObserver
-from rag4p.util.key_loader import KeyLoader
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
@@ -15,8 +15,7 @@ if __name__ == '__main__':
 
     rag_observer = RAGObserver(question=question, answer=answer, context=context)
 
-    key_loader = KeyLoader()
-    answer_quality_service = OpenAIAnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
+    answer_quality_service = OllamaAnswerQualityService(access_ollama=AccessOllama())
 
     quality = answer_quality_service.determine_quality_answer_related_to_question(rag_observer=rag_observer)
     print(f"Quality: {quality.quality}, Reason: {quality.reason}")

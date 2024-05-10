@@ -2,10 +2,11 @@ import numpy as np
 
 from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
-from rag4p.integrations.openai.openai_answer_generator import OpenaiAnswerGenerator
-from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
+from rag4p.integrations.ollama.access_ollama import AccessOllama
+from rag4p.integrations.ollama.ollama_answer_generator import OllamaAnswerGenerator
+from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
+from rag4p.integrations.openai.quality.openai_answer_quality_service import OpenAIAnswerQualityService
 from rag4p.rag.generation.observed_answer_generator import ObservedAnswerGenerator
-from rag4p.rag.generation.quality.answer_quality_service import AnswerQualityService
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p.rag.tracker.rag_tracker import global_data
@@ -19,13 +20,14 @@ if __name__ == '__main__':
     key_loader = KeyLoader()
 
     # Using the internal content store with the local embedder
-    embedder = OnnxEmbedder()
+    access_ollama = AccessOllama()
+    embedder = OllamaEmbedder(access_ollama=access_ollama)
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())
 
-    openai_answer_generator = OpenaiAnswerGenerator(openai_api_key=key_loader.get_openai_api_key())
-    answer_generator = ObservedAnswerGenerator(answer_generator=openai_answer_generator)
+    ollama_answer_generator = OllamaAnswerGenerator(access_ollama=access_ollama)
+    answer_generator = ObservedAnswerGenerator(answer_generator=ollama_answer_generator)
 
     example_sentences = [
         "How many bolts were replaced?",
@@ -37,7 +39,7 @@ if __name__ == '__main__':
 
     # strategy = TopNRetrievalStrategy(retriever=retriever)
     strategy = WindowRetrievalStrategy(retriever=content_store, window_size=1)
-    answer_quality_service = AnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
+    answer_quality_service = OpenAIAnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
 
     answer_question_quality = []
     answer_context_quality = []

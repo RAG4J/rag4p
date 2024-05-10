@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rag4p"
-version = "0.1.3"
+version = "0.2.1"
 description = "This project I use a lot for workshops, it contains some utils for splitters, tokenizers, and a weaviate client that I reuse a lot"
 authors = ["Jettro Coenradie <jettro.coenradie@gmail.com>"]
 readme = "README.md"

@@ -18,10 +18,10 @@ class OpenaiAnswerGenerator(AnswerGenerator):
         completion = self.openai_client.chat.completions.create(
             model=self.openai_model,
             messages=[
-                {"role": "system", "content": "You are the tour guide for the Vasa Museum.You task is to answer "
-                                              "question about the Vasa ship. Limit your answer to the context as "
-                                              "provided. Do not use your own knowledge. The question is provided "
-                                              "after 'question:'. The context after 'context:'."},
+                {"role": "system", "content": "You are an assistant answering questions using the context provided. "
+                                              "If the context does not contain the answer, you should tell you cannot "
+                                              "answer using the context. The question is provided after 'question:'. "
+                                              "The context after 'context:'."},
                 {"role": "user", "content": f"Context: {context}\nQuestion: {question}\nAnswer:"},
             ],
             stream=False,

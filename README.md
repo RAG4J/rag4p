@@ -56,3 +56,13 @@ secret_key=...
 ```
 This secret key is used to decrypt the remote file containing the API keys. We will provide the value for this key
 during the workshop.
+
+## Using Ollama
+There is a simple way to run a Language Model on your local machine. Depending on your machine and the chosen model, it runs fast. I am not going in to much details on how to install it, but you can find the installation instructions on the [Ollama Downloads page](https://ollama.com/download/). 
+
+At the moment we prefer the model Phi 3. You can learn more about the model on the [Ollama Models page](https://ollama.com/models/). A lot of other models are available as well. You can try them out yourself. Make sure you pull the model first before you can use it. You can also use Ollama for the embeddings. We advice to pull the model _nomic-embed-text_ for this purpose. 
+
+```bash
+ollama pull phi3
+ollama pull nomic-embed-text
+```
