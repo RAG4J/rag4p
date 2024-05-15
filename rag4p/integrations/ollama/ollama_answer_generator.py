@@ -18,16 +18,3 @@ class OllamaAnswerGenerator(AnswerGenerator):
         answer:
         """
         return self.ollama.generate_answer(prompt=prompt, model=self.model)
-
-
-if __name__ == "__main__":
-    ollama = AccessOllama()
-    q_a = OllamaAnswerGenerator(ollama)
-
-    question = "Who are the presenters of the workshop about LLMs?"
-    context = ("At TeqNation Jettro and Daniel present the workshop where you can learn about the building blocks of "
-               "Large Language Models.")
-
-    answer = q_a.generate_answer(question, context)
-
-    print(answer)

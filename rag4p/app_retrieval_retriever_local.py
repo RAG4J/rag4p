@@ -31,3 +31,4 @@ if __name__ == '__main__':
             print(f"Document: {chunk.document_id}")
             print(f"Chunk id: {chunk.chunk_id}")
             print(f"Text: {chunk.chunk_text}")
+            print(f"Distance: {chunk.score:.3f}")

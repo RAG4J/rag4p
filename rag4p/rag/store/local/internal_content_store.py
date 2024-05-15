@@ -3,6 +3,7 @@ from typing import List
 import pandas as pd
 
 from rag4p.rag.model.chunk import Chunk
+from rag4p.rag.model.relevant_chunk import RelevantChunk
 from rag4p.rag.store.content_store import ContentStore
 from rag4p.rag.embedding.embedder import Embedder
 from rag4p.rag.retrieval.retriever import Retriever
@@ -29,12 +30,26 @@ class InternalContentStore(ContentStore, Retriever):
         embedding = self.embedder.embed(chunk.chunk_text)
         self.vector_store.loc[len(self.vector_store)] = {'chunk_id': chunk_id, 'chunk': chunk, 'embedding': embedding}
 
-    def find_relevant_chunks(self, query: str, max_results: int = 4) -> List[Chunk]:
+    def find_relevant_chunks(self, query: str, max_results: int = 4) -> List[RelevantChunk]:
         print(f"Finding relevant chunks for query: {query}")
         embedding = self.embedder.embed(query)
         self.vector_store['distance'] = self.vector_store['embedding'].apply(lambda x: distance.euclidean(x, embedding))
         relevant_chunks_df = self.vector_store.nsmallest(max_results, 'distance')
-        return relevant_chunks_df['chunk'].tolist()
+
+        relevant_chunks = []
+        for index, row in relevant_chunks_df.iterrows():
+            chunk = row['chunk']
+            score = row['distance']
+            relevant_chunk = RelevantChunk(
+                document_id=chunk.document_id,
+                chunk_id=chunk.chunk_id,
+                total_chunks=chunk.total_chunks,
+                text=chunk.chunk_text,
+                properties=chunk.properties,
+                score=score
+            )
+            relevant_chunks.append(relevant_chunk)
+        return relevant_chunks
 
     def get_chunk_by_id(self, chunk_id: str) -> Chunk:
         """

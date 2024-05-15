@@ -27,22 +27,3 @@ class OllamaQuestionGenerator(QuestionGenerator):
         generated question:
         """
         return self.ollama.generate_answer(prompt=prompt, model=self.model)
-
-
-if __name__ == "__main__":
-    ollama = AccessOllama()
-    question_generator = OllamaQuestionGenerator(ollama)
-    answer_generator = OllamaAnswerGenerator(ollama)
-
-    context = ("At TeqNation Jettro and Daniel present the workshop where you can learn about the building blocks of "
-               "Large Language Models.")
-
-    question = question_generator.generate_question(context)
-
-    print(question)
-
-    print("Now answer the question")
-
-    answer = answer_generator.generate_answer(question, context)
-
-    print(answer)
