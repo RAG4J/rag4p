@@ -19,8 +19,8 @@ class AnswerQualityService(ABC):
         return AnswerQuality(answer_to_question, answer_from_context)
 
     def determine_quality_answer_related_to_question(self, rag_observer: RAGObserver) -> AnswerToQuestionQuality:
-        chat_prompt = ChatPrompt(system_message_filename="../data/quality/quality_of_answer_to_question_system.txt",
-                                 user_message_filename="../data/quality/quality_of_answer_to_question_user.txt")
+        chat_prompt = ChatPrompt(system_message=self.quality_of_answer_to_question_system_prompt(),
+                                 user_message=self.quality_of_answer_to_question_user_prompt())
 
         completion = self.obtain_answer_to_question_quality(chat_prompt, rag_observer)
         quality, reason = self.split_quality_and_reason(completion)
@@ -31,8 +31,8 @@ class AnswerQualityService(ABC):
         pass
 
     def determine_quality_answer_from_context(self, rag_observer: RAGObserver) -> AnswerFromContextQuality:
-        chat_prompt = ChatPrompt(system_message_filename="../data/quality/quality_of_answer_from_context_system.txt",
-                                 user_message_filename="../data/quality/quality_of_answer_from_context_user.txt")
+        chat_prompt = ChatPrompt(system_message=self.quality_of_answer_from_context_system_prompt(),
+                                 user_message=self.quality_of_answer_from_context_user_prompt())
 
         completion = self.obtain_answer_from_context_quality(chat_prompt, rag_observer)
         quality, reason = self.split_quality_and_reason(completion)
@@ -48,3 +48,31 @@ class AnswerQualityService(ABC):
         quality = int(split[0].strip())
         reason = split[1].strip()
         return quality, reason
+
+    @staticmethod
+    def quality_of_answer_to_question_system_prompt():
+        return ("You are a quality assistant verifying retrieval augmented generation systems. Your task is to "
+                "verify a generated answer against the proposed question. Give the answer a score between 1 and 5 "
+                "and keep the number as an integer. 5 means the answer contains the answer to the proposed question "
+                "completely. 1 means there is not match between the answer and the question at all. The question "
+                "provided after 'question:'. The answer after 'answer:'. Write your answers in the format of score - "
+                "reason. Keep the reason short as in maximum 2 sentences. An example: 3 - The answer is correct but "
+                "some details are missing.")
+
+    @staticmethod
+    def quality_of_answer_from_context_system_prompt():
+        return ("You are a quality assistant verifying retrieval augmented generation systems. Your task is to verify "
+                "a generated answer against the provided context. Give the answer a score between 1 and 5 and keep "
+                "the number as an integer. 5 means the answer contains only facts from the context. 1 means there is "
+                "not match between the answer and the provided context at all. If the answer contains exact phrases "
+                "from the context, the score should be lower as well. The answer provided after 'answer:'. The "
+                "context after 'context:'. Write your answers in the format of score - reason. Keep the reason short "
+                "as in maximum 2 sentences. An example: 3 - The answer is correct but some details are missing.")
+
+    @staticmethod
+    def quality_of_answer_to_question_user_prompt():
+        return "Question: {question}\nAnswer: {answer}\nResult:\n"
+
+    @staticmethod
+    def quality_of_answer_from_context_user_prompt():
+        return "Answer: {answer}\nContext: {context}\nResult:\n"

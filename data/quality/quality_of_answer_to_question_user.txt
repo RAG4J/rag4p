@@ -1,1 +1,0 @@
-Question: {question}\nAnswer: {answer}\nResult:\n
