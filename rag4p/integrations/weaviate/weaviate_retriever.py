@@ -27,6 +27,7 @@ class WeaviateRetriever(Retriever):
         vector = self.embedder.embed(question)
         if self.hybrid:
             result = self.__chunk_collection().query.hybrid(query=question,
+                                                            query_properties=self.additional_properties,
                                                             limit=max_results,
                                                             alpha=0.5,
                                                             fusion_type=wvc.query.HybridFusion.RELATIVE_SCORE,
