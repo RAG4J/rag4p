@@ -24,7 +24,7 @@ class TestRetrievalQualityService(unittest.TestCase):
         self.assertEqual(1, len(retrieval_quality.incorrect))
 
     def test_read_question_answers_from_file_success(self):
-        question_answers = read_question_answers_from_file("../tests/data/questions_answers.csv")
+        question_answers = read_question_answers_from_file("tests/data/questions_answers.csv")
         self.assertEqual(len(question_answers), 1)
 
     def test_read_question_answers_from_file_failure(self):

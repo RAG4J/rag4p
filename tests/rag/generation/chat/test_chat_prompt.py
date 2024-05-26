@@ -32,7 +32,7 @@ class TestChatPrompt(unittest.TestCase):
 
     def test_read_user_message_from_file(self):
         directory = os.getcwd()
-        file_path = os.path.join(directory, "data/quality", "quality_of_answer_from_context_user.txt")
+        file_path = os.path.join(directory, "tests/data", "quality_of_answer_from_context_user.txt")
 
         chat_prompt = ChatPrompt(user_message_filename=file_path)
         result = chat_prompt.create_user_message({"answer": "my answer", "context": "provided context"})

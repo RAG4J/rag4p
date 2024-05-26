@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import Mock
-from rag4p.rag.retrieval.strategies.document_retrieval_policy import DocumentRetrievalStrategy
+from rag4p.rag.retrieval.strategies.document_retrieval_strategy import DocumentRetrievalStrategy
 from rag4p.rag.retrieval.retriever import Retriever
 from rag4p.rag.model.relevant_chunk import RelevantChunk, Chunk
 
