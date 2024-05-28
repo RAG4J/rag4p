@@ -20,6 +20,9 @@ class OnnxEmbedder(Embedder):
         self.tokenizer.enable_padding(pad_to_multiple_of=1)
         self.ort_sess = ort.InferenceSession('../data/all-minilm-l6-v2-q.onnx')
 
+    def model(self) -> str:
+        return "MiniLM"
+
     def identifier(self) -> str:
         return "onnx-embedder-mini-lm"
 
@@ -37,3 +40,7 @@ class OnnxEmbedder(Embedder):
         # Mean Pooling (note: assumes that there are no padded elements)
         embeddings = np.mean(token_embeddings, axis=2)
         return embeddings[0][0]
+
+    @staticmethod
+    def supplier() -> str:
+        return "ONNX"

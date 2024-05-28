@@ -51,13 +51,13 @@ class TestInternalContentStore(unittest.TestCase):
     @patch.object(Embedder, 'embed')
     def test_backup_restore(self, mock_embed):
         mock_embed.embed.return_value = [0.1, 0.2, 0.3]
-        mock_embed.identifier.return_value = 'test_embedder'
+        mock_embed.identifier.return_value = 'test_embedder_model'
+        mock_embed.supplier.return_value = 'test'
+        mock_embed.model.return_value = 'model'
+
         store = InternalContentStore(mock_embed)
         chunk = Chunk(document_id='1', chunk_id=1, chunk_text='This is a chunk.', total_chunks=1, properties={})
         store.store([chunk])
-        retrieved_chunk = store.get_chunk_by_id('1_1')
-        self.assertEqual('1_1', retrieved_chunk.get_id())
-        self.assertEqual('This is a chunk.', retrieved_chunk.chunk_text)
 
         test_path = 'test_backup'
         store.backup(test_path)

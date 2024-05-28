@@ -18,8 +18,16 @@ class InternalContentStore(ContentStore, Retriever):
     The internal content stores stores the chunks in memory, it acts as a normal content store, but it als contains
     all the methods from a retriever, so it can be used as a retriever as well. This is useful for testing purposes.
     """
+
     def __init__(self, embedder: Embedder):
-        super().__init__({'name': 'internal-content-store', 'embedder': embedder.identifier()})
+        super().__init__(
+            {
+                'name': 'internal-content-store',
+                'embedder': embedder.identifier(),
+                'supplier': embedder.supplier(),
+                'model': embedder.model()
+            }
+        )
         self.embedder = embedder
         self.vector_store = pd.DataFrame(columns=['chunk_id', 'chunk', 'embedding'])
 
@@ -71,7 +79,7 @@ class InternalContentStore(ContentStore, Retriever):
         for index, row in self.vector_store.iterrows():
             yield row['chunk']
 
-    def backup(self, path: str = 'internal_content_store'):
+    def backup(self, path: str):
         # Save the DataFrame to a pickle file
         with open(f'{path}.pickle', 'wb') as f:
             pickle.dump(self.vector_store, f)
@@ -81,7 +89,7 @@ class InternalContentStore(ContentStore, Retriever):
             json.dump(self._metadata, f)
 
     @classmethod
-    def load_from_backup(cls, embedder: Embedder, path: str = 'internal_content_store'):
+    def load_from_backup(cls, embedder: Embedder, path: str):
         # Create an instance of the class
         instance = cls(embedder)
 
@@ -92,5 +100,10 @@ class InternalContentStore(ContentStore, Retriever):
         # Load the metadata from the JSON file
         with open(f'{path}_metadata.json', 'r') as f:
             instance._metadata = json.load(f)
+
+        if 'embedder' in instance._metadata:
+            if instance._metadata['embedder'] != embedder.identifier():
+                raise Exception(f"Embedder {embedder.identifier()} does not match the one in the backup: "
+                                f"{instance._metadata['embedder']}")
 
         return instance

@@ -12,3 +12,11 @@ class Embedder(ABC):
     @abstractmethod
     def identifier(self) -> str:
         pass
+
+    @staticmethod
+    def supplier() -> str:
+        pass
+
+    @abstractmethod
+    def model(self) -> str:
+        pass
