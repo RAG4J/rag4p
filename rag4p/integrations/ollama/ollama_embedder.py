@@ -10,16 +10,16 @@ class OllamaEmbedder(Embedder):
 
     def __init__(self, access_ollama: AccessOllama, model: str = DEFAULT_EMBEDDING_MODEL):
         self.ollama = access_ollama
-        self.model = model
+        self.embedding_model = model
 
     def model(self) -> str:
-        return self.model
+        return self.embedding_model
 
     def identifier(self) -> str:
-        return f"{self.supplier().lower()}-embedder-{self.model.lower()}"
+        return f"{self.supplier().lower()}-embedder-{self.embedding_model.lower()}"
 
     def embed(self, text: str) -> [float]:
-        return self.ollama.generate_embedding(text, model=self.model)
+        return self.ollama.generate_embedding(text, model=self.embedding_model)
 
     @staticmethod
     def supplier() -> str:
