@@ -19,6 +19,9 @@ class OpenAIEmbedder(Embedder):
 
         self.embedding_model = embedding_model
 
+    def identifier(self) -> str:
+        return f"openai-embedder-{self.embedding_model}"
+
     def embed(self, text: str) -> [float]:
         response = self.client.embeddings.create(input=text, model=self.embedding_model, encoding_format="float")
         embeddings = response.data

@@ -12,12 +12,16 @@ class OnnxEmbedder(Embedder):
     model is loaded from the file all-minilm-l6-v2-q.onnx. The tokenizer is loaded from the file tokenizer.json.
     The model runs on your local machine.
     """
+
     def __init__(self, max_length: int = 512):
         self.max_length = max_length
         self.tokenizer = Tokenizer.from_file("../data/tokenizer.json")
         self.tokenizer.enable_truncation(max_length=max_length)
         self.tokenizer.enable_padding(pad_to_multiple_of=1)
         self.ort_sess = ort.InferenceSession('../data/all-minilm-l6-v2-q.onnx')
+
+    def identifier(self) -> str:
+        return "onnx-embedder-mini-lm"
 
     def embed(self, text: str) -> List[float]:
         tokens = self.tokenizer.encode(text, add_special_tokens=True)

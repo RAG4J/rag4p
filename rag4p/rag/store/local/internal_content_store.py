@@ -1,3 +1,5 @@
+import json
+import pickle
 from typing import List
 
 import pandas as pd
@@ -17,6 +19,7 @@ class InternalContentStore(ContentStore, Retriever):
     all the methods from a retriever, so it can be used as a retriever as well. This is useful for testing purposes.
     """
     def __init__(self, embedder: Embedder):
+        super().__init__({'name': 'internal-content-store', 'embedder': embedder.identifier()})
         self.embedder = embedder
         self.vector_store = pd.DataFrame(columns=['chunk_id', 'chunk', 'embedding'])
 
@@ -67,3 +70,27 @@ class InternalContentStore(ContentStore, Retriever):
     def loop_over_chunks(self):
         for index, row in self.vector_store.iterrows():
             yield row['chunk']
+
+    def backup(self, path: str = 'internal_content_store'):
+        # Save the DataFrame to a pickle file
+        with open(f'{path}.pickle', 'wb') as f:
+            pickle.dump(self.vector_store, f)
+
+        # Save the metadata to a JSON file
+        with open(f'{path}_metadata.json', 'w') as f:
+            json.dump(self._metadata, f)
+
+    @classmethod
+    def load_from_backup(cls, embedder: Embedder, path: str = 'internal_content_store'):
+        # Create an instance of the class
+        instance = cls(embedder)
+
+        # Load the DataFrame from the pickle file
+        with open(f'{path}.pickle', 'rb') as f:
+            instance.vector_store = pickle.load(f)
+
+        # Load the metadata from the JSON file
+        with open(f'{path}_metadata.json', 'r') as f:
+            instance._metadata = json.load(f)
+
+        return instance

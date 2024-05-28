@@ -12,5 +12,8 @@ class OllamaEmbedder(Embedder):
         self.ollama = access_ollama
         self.model = model
 
+    def identifier(self) -> str:
+        return f"ollama-embedder-{self.model}"
+
     def embed(self, text: str) -> [float]:
         return self.ollama.generate_embedding(text, model=self.model)

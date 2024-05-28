@@ -8,3 +8,7 @@ class Embedder(ABC):
     @abstractmethod
     def embed(self, text: str) -> [float]:
         pass
+
+    @abstractmethod
+    def identifier(self) -> str:
+        pass

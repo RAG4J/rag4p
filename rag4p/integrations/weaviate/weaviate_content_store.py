@@ -10,6 +10,11 @@ from rag4p.rag.embedding.embedder import Embedder
 class WeaviateContentStore(ContentStore):
 
     def __init__(self, weaviate_access: AccessWeaviate, embedder: Embedder, collection_name: str = COLLECTION_NAME):
+        super().__init__({
+            'name': 'weaviate-content-store',
+            'embedder': embedder.identifier(),
+            'collection_name': collection_name,
+        })
         self.embedder = embedder
         self.weaviate_access = weaviate_access
         self.collection_name = collection_name
