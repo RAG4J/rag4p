@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import pickle
 from typing import List
@@ -19,15 +20,19 @@ class InternalContentStore(ContentStore, Retriever):
     all the methods from a retriever, so it can be used as a retriever as well. This is useful for testing purposes.
     """
 
-    def __init__(self, embedder: Embedder):
-        super().__init__(
-            {
+    def __init__(self, embedder: Embedder, metadata=None):
+        _metadata = {
                 'name': 'internal-content-store',
+                'create_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'embedder': embedder.identifier(),
                 'supplier': embedder.supplier(),
                 'model': embedder.model()
             }
-        )
+
+        if metadata is not None:
+            _metadata = {**_metadata, **metadata}
+
+        super().__init__(_metadata)
         self.embedder = embedder
         self.vector_store = pd.DataFrame(columns=['chunk_id', 'chunk', 'embedding'])
 

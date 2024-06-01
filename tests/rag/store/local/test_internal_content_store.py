@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
+from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.rag.model.chunk import Chunk
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p.rag.embedding.embedder import Embedder
@@ -55,13 +57,15 @@ class TestInternalContentStore(unittest.TestCase):
         mock_embed.supplier.return_value = 'test'
         mock_embed.model.return_value = 'model'
 
-        store = InternalContentStore(mock_embed)
+        store = InternalContentStore(mock_embed, metadata={'splitter': 'SentenceSplitter'})
         chunk = Chunk(document_id='1', chunk_id=1, chunk_text='This is a chunk.', total_chunks=1, properties={})
         store.store([chunk])
 
         test_path = 'test_backup'
         store.backup(test_path)
         store = InternalContentStore.load_from_backup(mock_embed, test_path)
+        self.assertEqual('SentenceSplitter', store.get_metadata()['splitter'])
+        self.assertEqual('test', store.get_metadata()['supplier'])
         # remove the created backup file
         import os
         os.remove(f'{test_path}.pickle')
