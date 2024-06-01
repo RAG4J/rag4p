@@ -1,14 +1,17 @@
 import unittest
 
-from rag4p.integrations.openai import DEFAULT_MODEL
-from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
 from rag4p.indexing.input_document import InputDocument
+from rag4p.indexing.splitters.max_token_splitter import MaxTokenSplitter
+from rag4p.integrations.ollama import EMBEDDING_MODEL_NOMIC
+from rag4p.integrations.ollama import PROVIDER as OLLAMA_PROVIDER
+from rag4p.integrations.openai import DEFAULT_EMBEDDING_MODEL
+from rag4p.integrations.openai import PROVIDER as OPENAI_PROVIDER
 
 
 class TestMaxTokenSplitter(unittest.TestCase):
 
     def setUp(self):
-        self.splitter = MaxTokenSplitter(max_tokens=5, model=DEFAULT_MODEL)
+        self.splitter = MaxTokenSplitter(max_tokens=5, provider=OPENAI_PROVIDER, model=DEFAULT_EMBEDDING_MODEL)
 
     def test_split_into_chunks_with_exact_multiple_of_max_tokens(self):
         input_document = InputDocument(document_id="1", text="This is a test document", properties={})
@@ -33,6 +36,15 @@ class TestMaxTokenSplitter(unittest.TestCase):
         input_document = InputDocument(document_id="1", text="", properties={})
         chunks = self.splitter.split(input_document)
         self.assertEqual(len(chunks), 0)
+
+    def test_split_into_chunks_with_ollama_provider(self):
+        """Note: The nomic tokenizer uses special tokens that are also counted in the token count. Therefore, the
+        total amount of chunks is 2 instead of 1."""
+        splitter = MaxTokenSplitter(max_tokens=5, provider=OLLAMA_PROVIDER, model=EMBEDDING_MODEL_NOMIC)
+        input_document = InputDocument(document_id="1", text="This is a test document", properties={})
+        chunks = splitter.split(input_document)
+        self.assertEqual(2, len(chunks))
+        self.assertEqual(2, chunks[0].total_chunks)
 
 
 if __name__ == '__main__':

@@ -17,3 +17,7 @@ class SentenceSplitter(Splitter):
             chunk = Chunk(input_document.document_id, i, len(sentences), sentences[i], input_document.properties)
             chunks.append(chunk)
         return chunks
+
+    @staticmethod
+    def name() -> str:
+        return "SentenceSplitter"

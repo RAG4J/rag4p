@@ -11,3 +11,7 @@ class SingleChunkSplitter(Splitter):
     def split(self, input_document: InputDocument) -> [str]:
         chunk = Chunk(input_document.document_id, 1, 1, input_document.text, input_document.properties)
         return [chunk]
+
+    @staticmethod
+    def name() -> str:
+        return "SingleChunkSplitter"

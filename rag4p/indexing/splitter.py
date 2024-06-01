@@ -10,4 +10,9 @@ class Splitter(ABC):
     @abstractmethod
     def split(self, input_document: InputDocument) -> List[Chunk]:
         pass
+
+    @staticmethod
+    @abstractmethod
+    def name() -> str:
+        pass
     
