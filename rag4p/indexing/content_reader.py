@@ -17,3 +17,6 @@ class ContentReader(ABC):
         Iterable[List[InputDocument]]: An iterable of lists of input documents.
         """
         pass
+
+    def name(self) -> str:
+        return self.__class__.__name__

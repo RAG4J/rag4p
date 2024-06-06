@@ -3,12 +3,10 @@ import uuid
 import weaviate
 import weaviate.classes as wvc
 
-from rag4p.integrations.weaviate import COLLECTION_NAME
-
 
 class AccessWeaviate:
 
-    def __init__(self, url, access_key, collection_name: str = COLLECTION_NAME, openai_api_key: str = None):
+    def __init__(self, url, access_key, openai_api_key: str = None):
         print(f"Connecting to Weaviate at {url}")
         headers = {}
         if openai_api_key:
@@ -19,7 +17,10 @@ class AccessWeaviate:
             auth_credentials=weaviate.auth.AuthApiKey(access_key),
             headers=headers
         )
-        self.collection_name = collection_name
+
+    def available_collections(self):
+        collections = self.client.collections.list_all(simple=True)
+        return [collection["name"] for collection in collections]
 
     def does_collection_exist(self, collection_name):
         exists = self.client.collections.exists(collection_name)
@@ -64,11 +65,27 @@ class AccessWeaviate:
         collections = self.client.collections.list_all(simple=False)
         for collection in collections:
             print(f"Available collection: {collection}")
-        print(self.client.collections.export_config(name=self.collection_name))
 
-    def query_collection(self, question: str, max_results: int = 2):
+    def obtain_meta(self):
+        meta = self.client.get_meta()
+        collections = self.client.collections.list_all(simple=False)
+        meta["collections"] = collections
+        return meta
+
+    def obtain_meta_for_collection(self, collection_name: str):
+        meta = self.client.get_meta()
+        if self.does_collection_exist(collection_name):
+            meta["collection"] = self.client.collections.export_config(name=collection_name)
+        return meta
+
+    def query_collection(self, question: str, collection_name: str, max_results: int = 2):
         print(f"Query collection based on user input {question}")
-        collection = self.client.collections.get(name=self.collection_name)
+
+        if not collection_name or not self.does_collection_exist(collection_name):
+            print(f"Collection {collection_name} does not exist")
+            raise Exception(f"Collection {collection_name} does not exist")
+
+        collection = self.client.collections.get(name=collection_name)
         return collection.query.hybrid(query=question,
                                        limit=max_results,
                                        alpha=0.5,

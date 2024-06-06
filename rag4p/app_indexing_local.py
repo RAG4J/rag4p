@@ -16,7 +16,9 @@ if __name__ == '__main__':
     splitter = SentenceSplitter()
 
     indexing_service = IndexingService(content_store=content_store)
-    indexing_service.index_documents(content_reader=content_reader, splitter=splitter)
+    response = indexing_service.index_documents(content_reader=content_reader, splitter=splitter)
+
+    print(response)
 
     query = "Since when was the Vasa available for the public to visit?"
     relevant_chunks = content_store.find_relevant_chunks(query=query, max_results=2)
