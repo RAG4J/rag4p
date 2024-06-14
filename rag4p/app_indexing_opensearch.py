@@ -20,9 +20,10 @@ if __name__ == '__main__':
     opensearch_client = OpenSearchClient(opensearch_client)
 
     index_template = ComponentTemplate(name="vasa_index_template",
-                                       version=1,
+                                       version=2,
                                        index_name="rag4p-vasa",
-                                       component_names=["vasa_settings", "vasa_mappings", "vasa_dynamic_mappings"])
+                                       component_names=["vasa_settings", "vasa_mappings", "vasa_dynamic_mappings"],
+                                       embedding_dimension=1536)
     component_settings = ComponentSettings(name="vasa_settings", version=1, settings={})
     component_dyn_mappings = ComponentDynamicMappings(name="vasa_dynamic_mappings", version=1, dynamic_mappings=[])
     component_mappings = ComponentMappings(name="vasa_mappings", version=1, mappings={

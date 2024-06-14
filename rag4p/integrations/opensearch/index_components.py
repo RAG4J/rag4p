@@ -75,7 +75,7 @@ class ComponentDynamicMappings(IndexComponent):
 
 
 class ComponentTemplate(IndexComponent):
-    def __init__(self, name: str, version: int, index_name: str, component_names: list):
+    def __init__(self, name: str, version: int, index_name: str, component_names: list, embedding_dimension: int = 1536):
         super().__init__(name, version)
         self.template = {
             "index_patterns": [f"{index_name}-*"],
@@ -94,7 +94,11 @@ class ComponentTemplate(IndexComponent):
                         },
                         "chunk_text": {
                             "type": "text"
-                        }
+                        },
+                        "chunk_vector": {
+                            "type": "knn_vector",
+                            "dimension": embedding_dimension
+                        },
                     }
                 },
                 "settings": {

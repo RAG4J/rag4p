@@ -22,8 +22,37 @@ class OpenSearchRetriever(Retriever):
     def find_relevant_chunks(self, question: str, max_results: int = 4) -> [RelevantChunk]:
         fields = ["chunk_text"]
         fields.extend(self.additional_properties)
-        print(fields)
-        query = {"query": {"multi_match": {"fields": fields, "query": question}}}
+        if not self.hybrid:
+            query = {"match_all": {}}
+        else:
+            query = {"multi_match": {"fields": fields, "query": question}}
+        query = {
+            "_source": {
+                "excludes": ["chunk_vector"]
+            },
+            "query": {
+                "bool": {
+                    "should": [
+                        {
+                            "script_score": {
+                                "query": {"match_all": {}},
+                                "script": {
+                                    "source": "knn_score",
+                                    "lang": "knn",
+                                    "params": {
+                                        "field": "chunk_vector",
+                                        "query_value": self.embedder.embed(question),
+                                        "space_type": "cosinesimil"
+                                    }
+                                }
+                            }
+                        },
+                        query
+                    ]
+                }
+            },
+            "size": max_results
+        }
         search_response = self.opensearch_client.search(body=query, index_name=self.index_name, size=max_results)
         relevant_chunks = []
 

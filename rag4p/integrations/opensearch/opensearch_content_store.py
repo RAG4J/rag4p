@@ -28,6 +28,7 @@ class OpenSearchContentStore(ContentStore):
                 "chunk_id": chunk.chunk_id,
                 "chunk_text": chunk.chunk_text,
                 "total_chunks": len(chunks),
+                "chunk_vector": self.embedder.embed(chunk.chunk_text),
             }
 
             for key, value in chunk.properties.items():

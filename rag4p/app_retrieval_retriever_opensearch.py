@@ -19,16 +19,16 @@ if __name__ == '__main__':
                                     embedder=embedder,
                                     index_name="rag4p-vasa",
                                     additional_properties=["title", "timerange"],
-                                    hybrid=False)
+                                    hybrid=True)
 
-    for chunk in retriever.loop_over_chunks():
-        print(f"Document: {chunk.document_id} - {chunk.chunk_id}")
+    # for chunk in retriever.loop_over_chunks():
+    #     print(f"Document: {chunk.document_id} - {chunk.chunk_id}")
 
-    get_chunk = retriever.get_chunk(document_id="a-faithful-contract", chunk_id=4)
-    print("--------------------------------------------------")
-    print(f"Document: {get_chunk.document_id} - {get_chunk.chunk_id}")
+    # get_chunk = retriever.get_chunk(document_id="a-faithful-contract", chunk_id=4)
+    # print("--------------------------------------------------")
+    # print(f"Document: {get_chunk.document_id} - {get_chunk.chunk_id}")
 
-    question = "vasa"
+    question = "shipwright"
     relevant_chunks = retriever.find_relevant_chunks(question=question, max_results=2)
     print(f"Found {len(relevant_chunks)} relevant chunks for query: {question}")
 
