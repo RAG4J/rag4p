@@ -1,0 +1,1 @@
+DEFAULT_INDEX = "rag4j-chunks"
