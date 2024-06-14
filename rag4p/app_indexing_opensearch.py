@@ -16,8 +16,10 @@ if __name__ == '__main__':
     load_dotenv()
     key_loader = KeyLoader()
 
-    opensearch_client = build_aws_search_service()
-    opensearch_client = OpenSearchClient(opensearch_client)
+    opensearch_conn = build_aws_search_service(stack_name=key_loader.get_property("OPENSEARCH_STACK_NAME"),
+                                                 application_prefix=key_loader.get_property("OPENSEARCH_APP_PREFIX"))
+
+    opensearch_client = OpenSearchClient(opensearch_conn)
 
     index_template = ComponentTemplate(name="vasa_index_template",
                                        version=2,
