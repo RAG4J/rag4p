@@ -77,7 +77,6 @@ class OpenSearchRetriever(Retriever):
 
     def get_chunk_by_id(self, chunk_id: str) -> Chunk:
         chunk_response = self.opensearch_client.client().get(index=self.index_name, id=chunk_id)
-        print(chunk_response)
 
         return Chunk(
             document_id=chunk_response["_source"]["document_id"],
