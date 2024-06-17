@@ -9,6 +9,7 @@ from rag4p.indexing.input_document import InputDocument
 from rag4p.indexing.splitter import Splitter
 from rag4p.integrations.openai import DEFAULT_EMBEDDING_MODEL, PROVIDER as OPENAI_PROVIDER
 from rag4p.integrations.ollama import PROVIDER as OLLAMA_PROVIDER
+from rag4p.integrations.bedrock import PROVIDER as BEDROCK_PROVIDER
 
 
 class MaxTokenSplitter(Splitter):
@@ -26,6 +27,9 @@ class MaxTokenSplitter(Splitter):
         elif provider == OLLAMA_PROVIDER:
             tokenize_model = tokenizer_for_model(model)
             self.encoding = Tokenizer.from_pretrained(tokenize_model)
+        elif provider == BEDROCK_PROVIDER:
+            # TODO: Implement Bedrock tokenizer, but no information found for the moment, so abuse OpenAI tokenizer
+            self.encoding = tiktoken.encoding_for_model(DEFAULT_EMBEDDING_MODEL)
         else:
             raise ValueError(f"Unsupported provider: {provider}")
 
@@ -33,6 +37,8 @@ class MaxTokenSplitter(Splitter):
         if self.provider == OPENAI_PROVIDER:
             tokens = self.encoding.encode(input_document.text)
         elif self.provider == OLLAMA_PROVIDER:
+            tokens = self.encoding.encode(input_document.text).ids
+        elif self.provider == BEDROCK_PROVIDER:
             tokens = self.encoding.encode(input_document.text).ids
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
