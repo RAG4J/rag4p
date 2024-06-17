@@ -1,4 +1,4 @@
-PROVIDER = "Bedrock"
+PROVIDER = "bedrock"
 
 MODEL_TITAN_EXPRESS = "amazon.titan-text-express-v1"
 EMBEDDING_MODEL_TITAN = "amazon.titan-embed-text-v1"

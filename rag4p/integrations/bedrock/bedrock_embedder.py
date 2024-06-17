@@ -1,4 +1,4 @@
-from rag4p.integrations.bedrock import DEFAULT_EMBEDDING_MODEL, PROVIDER
+from rag4p.integrations.bedrock import DEFAULT_EMBEDDING_MODEL
 from rag4p.integrations.bedrock.access_bedrock import AccessBedrock
 from rag4p.rag.embedding.embedder import Embedder
 
@@ -23,4 +23,4 @@ class BedrockEmbedder(Embedder):
 
     @staticmethod
     def supplier() -> str:
-        return PROVIDER
+        return "Bedrock"
