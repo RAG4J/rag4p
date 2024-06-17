@@ -5,7 +5,7 @@ from rag4p.rag.embedding.embedder import Embedder
 
 class BedrockEmbedder(Embedder):
     """
-    Embedder that uses Ollama's API to embed text.
+    Embedder that uses Bedrock to embed text.
     """
 
     def __init__(self, access_bedrock: AccessBedrock, model: str = DEFAULT_EMBEDDING_MODEL):

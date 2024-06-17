@@ -1,8 +1,13 @@
 import json
+import os
 from abc import ABC
 from typing import List
 
 import boto3
+from dotenv import load_dotenv
+
+from rag4p.integrations.bedrock import EMBEDDING_MODEL_TITAN_V2
+from rag4p.util.key_loader import KeyLoader
 
 
 class AccessBedrock(ABC):
@@ -88,9 +93,17 @@ class AccessBedrock(ABC):
 
         return response_body["embedding"]
 
+    @staticmethod
+    def init_from_env(key_loader: KeyLoader):
+        region_name = key_loader.get_bedrock_region()
+        profile_name = key_loader.get_bedrock_profile()
+        return AccessBedrock(region_name=region_name, profile_name=profile_name)
+
 
 if __name__ == "__main__":
-    access_bedrock = AccessBedrock()
+    load_dotenv()
+
+    access_bedrock = AccessBedrock.init_from_env(KeyLoader())
     models = access_bedrock.list_models()
     print(models)
 
@@ -100,6 +113,6 @@ if __name__ == "__main__":
     print(response)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
-    model_id = "amazon.titan-embed-text-v1"
+    model_id = EMBEDDING_MODEL_TITAN_V2
     embedding = access_bedrock.generate_embedding(text, model_id)
     print(f"Embedding length: {len(embedding)}")

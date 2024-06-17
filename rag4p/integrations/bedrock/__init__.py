@@ -1,7 +1,8 @@
-PROVIDER = "bedrock"
+PROVIDER = "Bedrock"
 
 MODEL_TITAN_EXPRESS = "amazon.titan-text-express-v1"
 EMBEDDING_MODEL_TITAN = "amazon.titan-embed-text-v1"
+EMBEDDING_MODEL_TITAN_V2 = "amazon.titan-embed-text-v2:0"
 
 DEFAULT_MODEL = MODEL_TITAN_EXPRESS
 DEFAULT_EMBEDDING_MODEL = EMBEDDING_MODEL_TITAN

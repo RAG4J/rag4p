@@ -23,6 +23,12 @@ class KeyLoader:
     def get_openai_api_key(self):
         return self.get_property('OPENAI_API_KEY')
 
+    def get_bedrock_region(self):
+        return self.get_property('BEDROCK_REGION')
+
+    def get_bedrock_profile(self):
+        return self.get_property('BEDROCK_PROFILE')
+
     def get_property(self, key: str):
         value = os.environ.get(key)
         if not value:
