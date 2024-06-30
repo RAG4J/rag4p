@@ -76,22 +76,30 @@ class AccessBedrock(ABC):
         accept = "application/json"
         content_type = "application/json"
 
-        body = json.dumps({
-            "inputText": text,
-        })
+        if model.startswith("cohere."):
+            body = json.dumps({
+                "texts": [text],
+                "input_type": "search_document",
+            })
+        else:
+            body = json.dumps({
+                "inputText": text,
+            })
 
         response = self.bedrock_runtime.invoke_model(
             body=body, modelId=model, accept=accept, contentType=content_type
         )
 
         response_body = json.loads(response.get('body').read())
-        # print(f"Input text token count: {response_body.get('inputTextTokenCount')}")
 
         finish_reason = response_body.get("message")
         if finish_reason is not None:
             raise ValueError(f"Embeddings generation error: {finish_reason}")
 
-        return response_body["embedding"]
+        if model.startswith("cohere."):
+            return response_body["embeddings"][0]
+        else:
+            return response_body["embedding"]
 
     @staticmethod
     def init_from_env(key_loader: KeyLoader):
@@ -108,11 +116,11 @@ if __name__ == "__main__":
     print(models_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
-    model_id = "amazon.titan-text-express-v1"
+    model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
     response_ = access_bedrock.generate_answer(text, model_id)
     print(response_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
-    model_id = EMBEDDING_MODEL_TITAN_V2
+    model_id = "cohere.embed-english-v3"
     embedding = access_bedrock.generate_embedding(text, model_id)
     print(f"Embedding length: {len(embedding)}")
