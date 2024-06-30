@@ -104,13 +104,13 @@ if __name__ == "__main__":
     load_dotenv()
 
     access_bedrock = AccessBedrock.init_from_env(KeyLoader())
-    models = access_bedrock.list_models()
-    print(models)
+    models_ = access_bedrock.list_models()
+    print(models_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
     model_id = "amazon.titan-text-express-v1"
-    response = access_bedrock.generate_answer(text, model_id)
-    print(response)
+    response_ = access_bedrock.generate_answer(text, model_id)
+    print(response_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
     model_id = EMBEDDING_MODEL_TITAN_V2

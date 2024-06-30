@@ -39,7 +39,7 @@ class MaxTokenSplitter(Splitter):
         elif self.provider == OLLAMA_PROVIDER:
             tokens = self.encoding.encode(input_document.text).ids
         elif self.provider == BEDROCK_PROVIDER:
-            tokens = self.encoding.encode(input_document.text).ids
+            tokens = self.encoding.encode(input_document.text)
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
 
