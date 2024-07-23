@@ -17,20 +17,17 @@ class TestMaxTokenSplitter(unittest.TestCase):
         input_document = InputDocument(document_id="1", text="This is a test document", properties={})
         chunks = self.splitter.split(input_document)
         self.assertEqual(len(chunks), 1)
-        self.assertEqual(chunks[0].total_chunks, 1)
 
     def test_split_into_chunks_with_less_than_max_tokens(self):
         self.splitter.max_tokens = 10
         input_document = InputDocument(document_id="1", text="Short text.", properties={})
         chunks = self.splitter.split(input_document)
         self.assertEqual(len(chunks), 1)
-        self.assertEqual(chunks[0].total_chunks, 1)
 
     def test_split_into_chunks_with_more_than_max_tokens(self):
         input_document = InputDocument(document_id="1", text="This is a longer test document with more than max tokens.", properties={})
         chunks = self.splitter.split(input_document)
         self.assertGreater(len(chunks), 1)
-        self.assertTrue(all(chunk.total_chunks == len(chunks) for chunk in chunks))
 
     def test_split_into_chunks_with_no_tokens(self):
         input_document = InputDocument(document_id="1", text="", properties={})
@@ -44,7 +41,6 @@ class TestMaxTokenSplitter(unittest.TestCase):
         input_document = InputDocument(document_id="1", text="This is a test document", properties={})
         chunks = splitter.split(input_document)
         self.assertEqual(2, len(chunks))
-        self.assertEqual(2, chunks[0].total_chunks)
 
 
 if __name__ == '__main__':

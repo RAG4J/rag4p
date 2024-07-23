@@ -6,9 +6,13 @@ from rag4p.indexing.input_document import InputDocument
 
 
 class Splitter(ABC):
+    """
+    Abstract class for splitting an InputDocument or chunks into Chunks. The id and the properties of the document are
+    stored in the Chunk with other important data.
+    """
 
     @abstractmethod
-    def split(self, input_document: InputDocument) -> List[Chunk]:
+    def split(self, input_document: InputDocument, parent_chunk: Chunk = None) -> List[Chunk]:
         pass
 
     @staticmethod

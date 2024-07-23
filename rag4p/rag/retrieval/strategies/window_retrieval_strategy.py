@@ -6,6 +6,14 @@ from rag4p.rag.tracker.rag_tracker import global_data
 
 
 class WindowRetrievalStrategy(RetrievalStrategy):
+    """
+    This retrieval strategy retrieves a window of chunks around the relevant chunks. This strategy is useful when you
+    want to provide more context to the LLM. The window size can be set to 1, 2, 3, etc. The window size is the number
+    of chunks before and after the relevant chunk that should be included in the context.
+
+    When multiple levels of chunks are used, the window is applied to the level of chunks that are relevant. This means
+    that the window is applied to the level of chunks that are returned by the retriever.
+    """
 
     def __init__(self, retriever: Retriever, window_size: int = 1):
         self.retriever = retriever
@@ -43,12 +51,15 @@ class WindowRetrievalStrategy(RetrievalStrategy):
         return RetrievalOutput(retrieval_output_items)
 
     @staticmethod
-    def __chunk_ids_for_window(chunk_id: int, window_size: int, number_of_chunks: int) -> [int]:
+    def __chunk_ids_for_window(chunk_id: str, window_size: int, number_of_chunks: int) -> [int]:
+        # The chunk_id has the format 0 or 0_0, we need to extract the last part
+        _chunk_id = int(chunk_id.split("_")[-1])
+
         # Calculate the start and end of the window
-        start = max(0, chunk_id - window_size)
-        end = min(number_of_chunks - 1, chunk_id + window_size)
+        start = max(0, _chunk_id - window_size)
+        end = min(number_of_chunks - 1, _chunk_id + window_size)
 
         # Generate the list of chunk_ids
-        chunk_ids = [start + i for i in range(end - start + 1)]
+        chunk_ids = [str(start + i) for i in range(end - start + 1)]
 
         return chunk_ids

@@ -1,5 +1,7 @@
 from rag4p.indexing.indexing_service import IndexingService
+from rag4p.indexing.splitter_chain import SplitterChain
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
+from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
@@ -15,14 +17,15 @@ if __name__ == '__main__':
     embedder = OllamaEmbedder(access_ollama=access_ollama)
     content_reader = VasaContentReader()
     content_store = InternalContentStore(embedder=embedder)
-    splitter = SentenceSplitter()
+    splitter = SplitterChain([SingleChunkSplitter(), SentenceSplitter()], include_all_chunks=True)
 
     indexing_service = IndexingService(content_store=content_store)
     response = indexing_service.index_documents(content_reader=content_reader, splitter=splitter)
 
     print(response)
 
-    query = "Since when was the Vasa available for the public to visit?"
+    # query = "Since when was the Vasa available for the public to visit?"
+    query = "Who was the Dutch master shipwright?"
     relevant_chunks = content_store.find_relevant_chunks(query=query, max_results=2)
     print(f"Found {len(relevant_chunks)} relevant chunks for query: {query}")
     for chunk in relevant_chunks:
