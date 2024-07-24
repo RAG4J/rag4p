@@ -11,8 +11,8 @@ class TestRetrievalQualityService(unittest.TestCase):
     def setUp(self):
         self.retriever = Mock(spec=Retriever)
         self.question_answer_records = [
-            QuestionAnswerRecord("doc1", 1, "text1", "question1"),
-            QuestionAnswerRecord("doc2", 2, "text2", "question2"),
+            QuestionAnswerRecord("doc1", "1", "text1", "question1"),
+            QuestionAnswerRecord("doc2", "2", "text2", "question2"),
         ]
 
     def test_correct_retrieval_results(self):

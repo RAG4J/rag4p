@@ -41,6 +41,7 @@ class AccessOllama(ABC):
                                  json={
                                      "prompt": prompt,
                                      "model": model,
+                                     "format": "json",
                                      "stream": False
                                  })
         if response.status_code == 200:

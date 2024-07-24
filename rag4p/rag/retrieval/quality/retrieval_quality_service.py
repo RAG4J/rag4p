@@ -37,7 +37,7 @@ def read_question_answers_from_file(file_name: str = "../data/questions_answers.
             next(reader)
             for row in reader:
                 document_id = row[0]
-                chunk_id = int(row[1])
+                chunk_id = row[1]
                 chunk_text = row[2]
                 question = row[3]
 
