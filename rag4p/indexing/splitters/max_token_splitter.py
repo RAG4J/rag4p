@@ -33,13 +33,14 @@ class MaxTokenSplitter(Splitter):
         else:
             raise ValueError(f"Unsupported provider: {provider}")
 
-    def split(self, input_document: InputDocument) -> List[Chunk]:
+    def split(self, input_document: InputDocument, parent_chunk: Chunk = None) -> List[Chunk]:
+        input_text = input_document.text if parent_chunk is None else parent_chunk.chunk_text
         if self.provider == OPENAI_PROVIDER:
-            tokens = self.encoding.encode(input_document.text)
+            tokens = self.encoding.encode(input_text)
         elif self.provider == OLLAMA_PROVIDER:
-            tokens = self.encoding.encode(input_document.text).ids
+            tokens = self.encoding.encode(input_text).ids
         elif self.provider == BEDROCK_PROVIDER:
-            tokens = self.encoding.encode(input_document.text)
+            tokens = self.encoding.encode(input_text)
         else:
             raise ValueError(f"Unsupported provider: {self.provider}")
 
@@ -51,7 +52,8 @@ class MaxTokenSplitter(Splitter):
             chunk_tokens = tokens[:chunk_size]
             tokens = tokens[chunk_size:]
             chunk_text = self.encoding.decode(chunk_tokens)
-            chunk = Chunk(input_document.document_id, len(chunks), num_chunks, chunk_text, input_document.properties)
+            chunk_id = str(len(chunks)) if parent_chunk is None else f"{parent_chunk.chunk_id}_{len(chunks)}"
+            chunk = Chunk(input_document.document_id, chunk_id, num_chunks, chunk_text, input_document.properties)
             chunks.append(chunk)
 
         return chunks

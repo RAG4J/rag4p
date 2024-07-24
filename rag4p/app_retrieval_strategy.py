@@ -1,17 +1,17 @@
-from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.indexing_service import IndexingService
-from rag4p.rag.embedding.local.onnx_embedder import OnnxEmbedder
+from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
+from rag4p.integrations.ollama.access_ollama import AccessOllama
+from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
-from rag4p.util.key_loader import KeyLoader
 from rag4p.vasa_content_reader import VasaContentReader
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
 
-    key_loader = KeyLoader()
-    embedder = OnnxEmbedder()
+    access_ollama = AccessOllama()
+    embedder = OllamaEmbedder(access_ollama=access_ollama)
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=SentenceSplitter())

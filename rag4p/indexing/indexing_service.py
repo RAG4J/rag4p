@@ -1,12 +1,11 @@
 import time
-
 from abc import ABC
 
 from rag4p.indexing.content_reader import ContentReader
 from rag4p.indexing.indexing_response import IndexingResponse
 from rag4p.indexing.input_document import InputDocument
-from rag4p.rag.store.content_store import ContentStore
 from rag4p.indexing.splitter import Splitter
+from rag4p.rag.store.content_store import ContentStore
 
 
 class IndexingService(ABC):

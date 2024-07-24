@@ -14,7 +14,7 @@ class ObservedRetriever(Retriever):
             global_data["observer"].add_relevant_chunk(relevant_chunk.get_id(), relevant_chunk.text)
         return relevant_chunks
 
-    def get_chunk(self, document_id: str, chunk_id: int) -> Chunk:
+    def get_chunk(self, document_id: str, chunk_id: str) -> Chunk:
         chunk = self.retriever.get_chunk(document_id, chunk_id)
         return chunk
 

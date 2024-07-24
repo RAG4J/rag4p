@@ -14,6 +14,9 @@ class DocumentRetrievalStrategy(RetrievalStrategy):
     splitted into chunks, now you want to answer who wrote about a specific topic. The authors of the blogs posts are
     in the additional properties of the chunks. You can use this strategy to retrieve the complete blog post and the
     author of the blog post. Using this context, the LLM can find the author of the specific found blog post.
+
+    When the chunks are created using a chain of splitters, the complete document is retrieved by combining all chunks
+    from the highest level of the chain.
     """
 
     def __init__(self, retriever: Retriever, observe: bool = False):
@@ -36,6 +39,11 @@ class DocumentRetrievalStrategy(RetrievalStrategy):
         unique_docs = self.__unique_documents_from_chunks(relevant_chunks)
 
         for relevant_chunk in unique_docs:
+            # for a chunk that is not of the first splitter level, we need to obtain the parent chunk that is of the
+            # first splitter level
+            if len(relevant_chunk.chunk_id.split("_")) > 1:
+                relevant_chunk = self.retriever.get_chunk(relevant_chunk.document_id, relevant_chunk.chunk_id.split("_")[0])
+
             overall_text = self.__read_text_from_all_chunks_for_document(relevant_chunk.document_id,
                                                                          relevant_chunk.total_chunks)
 
