@@ -7,8 +7,9 @@ from rag4p.rag.tracker.rag_observer import RAGObserver
 
 class OllamaAnswerQualityService(AnswerQualityService):
 
-    def __init__(self, access_ollama: AccessOllama):
+    def __init__(self, access_ollama: AccessOllama, model: str = MODEL_PHI3):
         self.ollama = access_ollama
+        self.model = model
 
     def obtain_answer_from_context_quality(self, chat_prompt: ChatPrompt, rag_observer: RAGObserver):
         prompt_user = chat_prompt.create_user_message(params={
@@ -17,7 +18,7 @@ class OllamaAnswerQualityService(AnswerQualityService):
         })
         prompt_system = chat_prompt.create_system_message(params={})
         prompt = prompt_system + prompt_user
-        response = self.ollama.generate_answer(prompt=prompt, model=MODEL_PHI3)
+        response = self.ollama.generate_answer(prompt=prompt, model=self.model)
         return response
 
     def obtain_answer_to_question_quality(self, chat_prompt: ChatPrompt, rag_observer: RAGObserver):
@@ -27,6 +28,6 @@ class OllamaAnswerQualityService(AnswerQualityService):
         })
         prompt_system = chat_prompt.create_system_message(params={})
         prompt = prompt_system + prompt_user
-        response = self.ollama.generate_answer(prompt=prompt, model=MODEL_PHI3)
+        response = self.ollama.generate_answer(prompt=prompt, model=self.model)
         return response
 

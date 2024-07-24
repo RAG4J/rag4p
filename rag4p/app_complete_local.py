@@ -3,6 +3,7 @@ import numpy as np
 from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.semantic_splitter import SemanticSplitter
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
+from rag4p.integrations.ollama import MODEL_MISTRAL
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_answer_generator import OllamaAnswerGenerator
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
@@ -25,7 +26,7 @@ if __name__ == '__main__':
 
     # Using the internal content store with the local embedder
     access_ollama = AccessOllama()
-    ollama_model = "llama3"
+    ollama_model = MODEL_MISTRAL
     embedder = OllamaEmbedder(access_ollama=access_ollama)
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
@@ -46,8 +47,8 @@ if __name__ == '__main__':
 
     # strategy = TopNRetrievalStrategy(retriever=retriever)
     strategy = WindowRetrievalStrategy(retriever=content_store, window_size=1)
-    answer_quality_service = OpenAIAnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
-    # answer_quality_service = OllamaAnswerQualityService(access_ollama=access_ollama)
+    # answer_quality_service = OpenAIAnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
+    answer_quality_service = OllamaAnswerQualityService(access_ollama=access_ollama)
 
     answer_question_quality = []
     answer_context_quality = []
