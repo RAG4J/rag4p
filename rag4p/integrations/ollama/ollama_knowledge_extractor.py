@@ -2,8 +2,6 @@ import json
 import re
 from typing import List
 
-from openai import OpenAI
-
 from rag4p.integrations.ollama import DEFAULT_MODEL
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.rag.generation.knowledge.knowledge import Knowledge
@@ -16,17 +14,29 @@ class OllamaKnowledgeExtractor(KnowledgeExtractor):
         self.model = model
 
     def extract_knowledge(self, context: str) -> List[Knowledge]:
-        prompt = f"""Task: Extract Knowledge Chunks
+        prompt = f"""
+        Task: Extract Knowledge Chunks
 
-            Please extract knowledge chunks from the following text. Each chunk should capture distinct, self-contained 
-            units of information in a subject-description format. Return the extracted knowledge chunks as a JSON 
-            object or array, ensuring that each chunk includes both the subject and its corresponding description. 
-            Use the format: 
-            {{"knowledge_chunks": [{{"subject": "subject", "description": "description"}}]}}
+        Objective: Extract knowledge chunks from the provided text. Each chunk should be a distinct, self-contained unit of information presented in a subject-description format.
 
-            Text:
-            {context}
-            """
+        Instructions:
+        1. Identify key pieces of information from the text.
+        2. Consolidate related pieces of information into broader categories where possible.
+        3. For each consolidated piece of information, extract it as a "subject" and provide a corresponding "description."
+        4. Ensure that the extracted chunks are formatted as a JSON object or array.
+        5. Typical subjects include: people, places, events, concepts, terms. Broaden the subjects to avoid overly narrow categories.
+
+        Format:
+        {{
+            "knowledge_chunks": [
+                {{"subject": "subject", "description": "description"}},
+                ...
+            ]
+        }}
+
+        Text:
+        {context}
+        """
         response = self.ollama.generate_answer(prompt=prompt, model=self.model)
 
         try:
