@@ -41,10 +41,17 @@ class InternalContentStore(ContentStore, Retriever):
             self.__store_chunk(chunk)
 
     def __store_chunk(self, chunk: Chunk):
+        # Check if chunk.chunk_text has content other than whitespace
+        if not chunk.chunk_text.strip():
+            print(f"Chunk {chunk.chunk_id}: '{chunk.chunk_text}' has no content")
+            return
         chunk_id = chunk.document_id + "_" + str(chunk.chunk_id)
         print(f"Storing chunk {chunk_id}: {chunk.chunk_text}")
-        embedding = self.embedder.embed(chunk.chunk_text)
-        self.vector_store.loc[len(self.vector_store)] = {'chunk_id': chunk_id, 'chunk': chunk, 'embedding': embedding}
+        try:
+            embedding = self.embedder.embed(chunk.chunk_text)
+            self.vector_store.loc[len(self.vector_store)] = {'chunk_id': chunk_id, 'chunk': chunk, 'embedding': embedding}
+        except Exception as e:
+            print(f"Error storing chunk {chunk_id}-{chunk.chunk_text}: {e}")
 
     def find_relevant_chunks(self, query: str, max_results: int = 4) -> List[RelevantChunk]:
         print(f"Finding relevant chunks for query: {query}")
