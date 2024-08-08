@@ -22,11 +22,6 @@ class SplitterChain(Splitter):
                                 splitter_nr: int = 0,
                                 parent_chunk: Chunk = None) -> List[Chunk]:
         chunks = []
-        if parent_chunk is None:
-            print("No parent chunk")
-        else:
-            print(f"Parent chunk text: {parent_chunk.chunk_text}")
-
         current_chunks = self.splitters[splitter_nr].split(input_document=input_document, parent_chunk=parent_chunk)
         for current_chunk in current_chunks:
 

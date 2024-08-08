@@ -16,7 +16,7 @@ class Retriever(ABC):
         pass
 
     def get_chunk(self, document_id: str, chunk_id: str) -> Chunk:
-        return self.get_chunk_by_id(document_id + "_" + chunk_id)
+        return self.get_chunk_by_id(document_id + "_" + str(chunk_id))
 
     @abstractmethod
     def get_chunk_by_id(self, chunk_id: str) -> Chunk:

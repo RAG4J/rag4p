@@ -43,9 +43,9 @@ if __name__ == '__main__':
 
     key_loader = KeyLoader()
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
-    # extractor = OpenaiKnowledgeExtractor(openai_api_key=key_loader.get_openai_api_key())
-    access_ollama = AccessOllama()
-    extractor = OllamaKnowledgeExtractor(access_ollama=access_ollama, model="llama3.1")
+    extractor = OpenaiKnowledgeExtractor(openai_api_key=key_loader.get_openai_api_key())
+    # access_ollama = AccessOllama()
+    # extractor = OllamaKnowledgeExtractor(access_ollama=access_ollama, model="llama3.1")
 
     splitter = SplitterChain(splitters=[SectionSplitter(), SemanticSplitter(knowledge_extractor=extractor)],
                              include_all_chunks=True)
