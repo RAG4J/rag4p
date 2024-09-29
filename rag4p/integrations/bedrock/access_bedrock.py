@@ -1,20 +1,17 @@
 import json
-import os
 from abc import ABC
 from typing import List
 
 import boto3
 from dotenv import load_dotenv
 
-from rag4p.integrations.bedrock import EMBEDDING_MODEL_TITAN_V2
 from rag4p.util.key_loader import KeyLoader
 
 
 class AccessBedrock(ABC):
 
-    def __init__(self, region_name: str = 'eu-central-1', profile_name: str = 'default'):
+    def __init__(self, region_name: str = 'eu-central-1'):
         self.region_name = region_name
-        self.profile_name = profile_name
 
         self.bedrock = boto3.client(service_name='bedrock', region_name=self.region_name)
         self.bedrock_runtime = boto3.client(service_name='bedrock-runtime', region_name=self.region_name)
@@ -104,8 +101,7 @@ class AccessBedrock(ABC):
     @staticmethod
     def init_from_env(key_loader: KeyLoader):
         region_name = key_loader.get_bedrock_region()
-        profile_name = key_loader.get_bedrock_profile()
-        return AccessBedrock(region_name=region_name, profile_name=profile_name)
+        return AccessBedrock(region_name=region_name)
 
 
 if __name__ == "__main__":
