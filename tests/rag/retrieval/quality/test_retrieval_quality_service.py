@@ -16,7 +16,7 @@ class TestRetrievalQualityService(unittest.TestCase):
         ]
 
     def test_correct_retrieval_results(self):
-        relevant_chunks = [RelevantChunk("doc1", 1, 1, "text1", {}, 0.7)]
+        relevant_chunks = [RelevantChunk("doc1", "1", 1, "text1", {}, 0.7)]
         self.retriever.find_relevant_chunks = Mock(return_value=relevant_chunks)
         retrieval_quality = obtain_retrieval_quality(self.question_answer_records, self.retriever)
         self.assertEqual(0.5, retrieval_quality.precision())
