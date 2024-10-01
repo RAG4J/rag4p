@@ -4,6 +4,7 @@ from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
+from rag4p.rag.retrieval.strategies.hierarchical_retrieval_strategy import HierarchicalRetrievalStrategy
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p.util.key_loader import KeyLoader
 from rag4p.vasa_content_reader import VasaContentReader
@@ -32,3 +33,14 @@ if __name__ == '__main__':
         print(f"Document: {chunk.document_id}")
         print(f"Chunk id: {chunk.chunk_id}")
         print(f"Text: {chunk.chunk_text}")
+
+    retrieval_strategy = HierarchicalRetrievalStrategy(retriever=content_store, max_levels=1)
+    retrieval_output = retrieval_strategy.retrieve_max_results(question=query, max_results=2)
+
+    print(f"\n\nRetrieval output for query: {query}")
+
+    for item in retrieval_output.items:
+        print(f"Document: {item.document_id}")
+        print(f"Chunk id: {item.chunk_id}")
+        print(f"Text: {item.text}")
+        print()

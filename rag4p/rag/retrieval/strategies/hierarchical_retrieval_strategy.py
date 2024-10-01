@@ -38,9 +38,16 @@ class HierarchicalRetrievalStrategy(RetrievalStrategy):
 
     def __extract_hierarchy_for_chunks(self, relevant_chunks: [RelevantChunk], observe: bool = False) -> RetrievalOutput:
         retrieval_output_items = []
+        used_chunk_ids = set()
+
         for relevant_chunk in relevant_chunks:
             hierarchical_chunk_id = self.__chunk_id_for_hierarchy(relevant_chunk.chunk_id, self.max_levels)
+
+            if hierarchical_chunk_id in used_chunk_ids:
+                continue
+
             hierarchical_chunk = self.retriever.get_chunk(relevant_chunk.document_id, hierarchical_chunk_id)
+            used_chunk_ids.add(hierarchical_chunk_id)
 
             if observe:
                 global_data["observer"].add_relevant_chunk(relevant_chunk.get_id(), hierarchical_chunk.chunk_text)
