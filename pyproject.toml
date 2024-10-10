@@ -1,16 +1,16 @@
 [tool.poetry]
 name = "rag4p"
-version = "0.9.4"
+version = "0.10.0"
 description = "This project I use a lot for workshops, it contains some utils for splitters, tokenizers, and a weaviate client that I reuse a lot"
 authors = ["Jettro Coenradie <jettro.coenradie@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-nltk = "^3.8.1"
+nltk = "^3.9.1"
 openai = "^1.13"
 pycryptodome = "^3.20.0"
-requests = "^2.31.0"
+requests = "^2.32.3"
 configparser = "^6.0.0"
 python-dotenv = "^1.0.0"
 pandas = "^2.1.4"
