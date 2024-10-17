@@ -11,7 +11,7 @@ from Crypto.Util.Padding import unpad, pad
 class KeyLoader:
     def __init__(self, key_path: str = None,
                  secret_key: str = None):
-        self.key_path = key_path if key_path else "https://www.retrocinevr.nl/rag4j/properties-encrypted.txt"
+        self.key_path = key_path if key_path else "https://cocoen.nl/rag4jp/properties-encrypted.txt"
         self.secret_key = secret_key if secret_key else os.getenv("SECRET_KEY")
 
     def get_weaviate_api_key(self):
