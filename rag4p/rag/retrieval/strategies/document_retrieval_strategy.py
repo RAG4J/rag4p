@@ -73,7 +73,7 @@ class DocumentRetrievalStrategy(RetrievalStrategy):
         chunk_ids = range(0, total_chunks)
         overall_text = ""
         for chunk_id in chunk_ids:
-            chunk = self.retriever.get_chunk(document_id, chunk_id)
+            chunk = self.retriever.get_chunk(document_id, str(chunk_id))
             overall_text += chunk.chunk_text + " "
         return overall_text
 
