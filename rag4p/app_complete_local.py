@@ -2,15 +2,12 @@ import numpy as np
 
 from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.semantic_splitter import SemanticSplitter
-from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
 from rag4p.integrations.ollama import MODEL_MISTRAL
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_answer_generator import OllamaAnswerGenerator
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.ollama.ollama_knowledge_extractor import OllamaKnowledgeExtractor
 from rag4p.integrations.ollama.quality.ollama_answer_quality_service import OllamaAnswerQualityService
-from rag4p.integrations.openai.openai_knowledge_extractor import OpenaiKnowledgeExtractor
-from rag4p.integrations.openai.quality.openai_answer_quality_service import OpenAIAnswerQualityService
 from rag4p.rag.generation.observed_answer_generator import ObservedAnswerGenerator
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
@@ -31,7 +28,6 @@ if __name__ == '__main__':
     content_store = InternalContentStore(embedder=embedder)
     indexing_service = IndexingService(content_store=content_store)
     splitter = SemanticSplitter(knowledge_extractor=OllamaKnowledgeExtractor(access_ollama=access_ollama, model=ollama_model))
-    # splitter = SemanticSplitter(knowledge_extractor=OpenaiKnowledgeExtractor(openai_api_key=key_loader.get_openai_api_key()))
     indexing_service.index_documents(content_reader=VasaContentReader(), splitter=splitter)
 
     ollama_answer_generator = OllamaAnswerGenerator(access_ollama=access_ollama, model=ollama_model)
@@ -45,9 +41,7 @@ if __name__ == '__main__':
         "Where did the person responsible for building the Vasa ship come from?"
     ]
 
-    # strategy = TopNRetrievalStrategy(retriever=retriever)
     strategy = WindowRetrievalStrategy(retriever=content_store, window_size=1)
-    # answer_quality_service = OpenAIAnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
     answer_quality_service = OllamaAnswerQualityService(access_ollama=access_ollama)
 
     answer_question_quality = []

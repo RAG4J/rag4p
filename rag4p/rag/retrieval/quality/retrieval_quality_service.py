@@ -18,10 +18,13 @@ def obtain_retrieval_quality(question_answer_records: [QuestionAnswerRecord], re
         # Retrieve the top 10 chunks for this question
         retrieved_chunks = retriever.find_relevant_chunks(question, max_results=1)[0]
 
-        if retrieved_chunks.document_id == document_id and retrieved_chunks.chunk_id == chunk_id:
+        correct_answer = retrieved_chunks.document_id == document_id and retrieved_chunks.chunk_id == chunk_id
+        if correct_answer:
             correct.append(item.document_id + " " + str(item.chunk_id))
         else:
             incorrect.append(item.document_id + " " + str(item.chunk_id))
+
+        print(f"Question: {question}, Correct: {correct_answer}")
 
     return RetrievalQuality(correct, incorrect)
 

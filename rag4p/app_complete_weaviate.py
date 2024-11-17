@@ -31,7 +31,7 @@ if __name__ == '__main__':
     ]
 
     strategy = WindowRetrievalStrategy(retriever=retriever, window_size=1)
-    answer_quality_service = AnswerQualityService(openai_api_key=key_loader.get_openai_api_key())
+    answer_quality_service = AnswerQualityService()
 
     answer_question_quality = []
     answer_context_quality = []
