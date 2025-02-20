@@ -16,7 +16,7 @@ from scipy.spatial import distance
 
 class InternalContentStore(ContentStore, Retriever):
     """
-    The internal content stores stores the chunks in memory, it acts as a normal content store, but it als contains
+    The internal content store stores the chunks in memory, it acts as a normal content store, but it als contains
     all the methods from a retriever, so it can be used as a retriever as well. This is useful for testing purposes.
     """
 

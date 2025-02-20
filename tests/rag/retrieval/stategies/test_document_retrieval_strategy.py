@@ -10,15 +10,15 @@ class TestDocumentRetrievalStrategy(unittest.TestCase):
         self.retriever = Mock(spec=Retriever)
 
         def mock_get_chunk(document_id, chunk_id):
-            if document_id == 'doc1' and chunk_id == 0:
+            if document_id == 'doc1' and chunk_id == "0":
                 return Chunk('doc1', "0", 3, "This is the text for chunk 1 of 3", {'prop1': 'value1'})
-            elif document_id == 'doc1' and chunk_id == 1:
+            elif document_id == 'doc1' and chunk_id == "1":
                 return Chunk('doc1', "1", 3, "This is the text for chunk 2 of 3", {'prop1': 'value1'})
-            elif document_id == 'doc1' and chunk_id == 2:
+            elif document_id == 'doc1' and chunk_id == "2":
                 return Chunk('doc1', "2", 3, "This is the text for chunk 3 of 3", {'prop1': 'value1'})
-            elif document_id == 'doc2' and chunk_id == 0:
+            elif document_id == 'doc2' and chunk_id == "0":
                 return Chunk('doc2', "0", 2, "This is the text for chunk 1 of 2", {'prop1': 'value2'})
-            elif document_id == 'doc2' and chunk_id == 1:
+            elif document_id == 'doc2' and chunk_id == "1":
                 return Chunk('doc1', "1", 2, "This is the text for chunk 2 of 2", {'prop1': 'value2'})
             else:
                 return None

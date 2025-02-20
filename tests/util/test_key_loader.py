@@ -19,18 +19,18 @@ class TestKeyLoader(unittest.TestCase):
 
     @patch('os.environ', {})
     def test_get_property_from_remote_file(self):
-        loader = KeyLoader(key_path='https://www.retrocinevr.nl/rag4j/properties-encrypted-test.txt',
+        loader = KeyLoader(key_path='https://www.cocoen.nl/rag4jp/properties-encrypted-test.txt',
                            secret_key='thisisjustatestkeythatweneednow9')
         self.assertEqual('test-key-openai', loader.get_openai_api_key())
 
     def test_encrypt_property(self):
-        loader = KeyLoader(key_path='https://www.retrocinevr.nl/rag4j/properties-encrypted-test.txt',
+        loader = KeyLoader(key_path='https://www.cocoen.nl/rag4jp/properties-encrypted-test.txt',
                            secret_key='thisisjustatestkeythatweneednow9')
         encrypted = loader.encrypt('https://weaviate.org')
         self.assertEqual('wtKBw2n9PR2dV55hsZIh8dUWRtCCBn+4bHdbtGysZIM=', encrypted)
 
     def test_decrypt_property(self):
-        loader = KeyLoader(key_path='https://www.retrocinevr.nl/rag4j/properties-encrypted-test.txt',
+        loader = KeyLoader(key_path='https://www.cocoen.nl/rag4jp/properties-encrypted-test.txt',
                            secret_key='thisisjustatestkeythatweneednow9')
         encrypted = loader.decrypt(R'4pfWfe2YQ4VApdq7gntMiw==')
         self.assertEqual('test-key-openai', encrypted)
