@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from typing import List
 
@@ -7,6 +8,7 @@ from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.rag.generation.knowledge.knowledge import Knowledge
 from rag4p.rag.generation.knowledge.knowledge_extractor import KnowledgeExtractor
 
+oke_logger = logging.getLogger("oke_logger")
 
 class OllamaKnowledgeExtractor(KnowledgeExtractor):
     def __init__(self, access_ollama: AccessOllama, model: str = DEFAULT_MODEL):
@@ -42,13 +44,13 @@ class OllamaKnowledgeExtractor(KnowledgeExtractor):
         try:
             answer = json.loads(response)
         except json.JSONDecodeError:
-            print(f"Error: Could not decode response from Ollama: {response}")
+            oke_logger.exception(f"Error decoding response from Ollama in OllamaKnowledgeExtractor.extract_knowledge.")
             return []
 
         k_items = []
         for kc in answer["knowledge_chunks"]:
             if "subject" not in kc or "description" not in kc:
-                print(f"Error: Knowledge chunk missing subject or description: {kc}")
+                oke_logger.error(f"Error: Knowledge chunk missing subject or description: {kc}")
                 continue
             item = Knowledge(kc["subject"], kc["description"])
             k_items.append(item)

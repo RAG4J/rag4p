@@ -1,12 +1,15 @@
 import json
+import logging
 from abc import ABC
 from typing import List
 
 import boto3
 from dotenv import load_dotenv
 
+from rag4p.logging_config import setup_logging
 from rag4p.util.key_loader import KeyLoader
 
+ab_logger = logging.getLogger(__name__)
 
 class AccessBedrock(ABC):
 
@@ -61,11 +64,11 @@ class AccessBedrock(ABC):
             additionalModelRequestFields=additional_model_fields
         )
 
-        # token_usage = bedrock_response['usage']
-        # print("Input tokens: %s", token_usage['inputTokens'])
-        # print("Output tokens: %s", token_usage['outputTokens'])
-        # print("Total tokens: %s", token_usage['totalTokens'])
-        # print("Stop reason: %s", bedrock_response['stopReason'])
+        token_usage = bedrock_response['usage']
+        ab_logger.debug("Input tokens: %s", token_usage['inputTokens'])
+        ab_logger.debug("Output tokens: %s", token_usage['outputTokens'])
+        ab_logger.debug("Total tokens: %s", token_usage['totalTokens'])
+        ab_logger.debug("Stop reason: %s", bedrock_response['stopReason'])
 
         return bedrock_response['output']['message']['content'][0]['text']
 
@@ -106,17 +109,19 @@ class AccessBedrock(ABC):
 
 if __name__ == "__main__":
     load_dotenv()
+    setup_logging()
+    ab_logger.setLevel(logging.DEBUG)
 
     access_bedrock = AccessBedrock.init_from_env(KeyLoader())
     models_ = access_bedrock.list_models()
-    print(models_)
+    ab_logger.debug(models_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
     model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
     response_ = access_bedrock.generate_answer(text, model_id)
-    print(response_)
+    ab_logger.debug(response_)
 
     text = "What is the capital of Germany, is it the same as when Germany was devided into East and West?"
     model_id = "cohere.embed-english-v3"
     embedding = access_bedrock.generate_embedding(text, model_id)
-    print(f"Embedding length: {len(embedding)}")
+    ab_logger.debug(f"Embedding length: {len(embedding)}")

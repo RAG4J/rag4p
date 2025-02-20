@@ -1,5 +1,6 @@
 from rag4p.integrations.bedrock.access_bedrock import AccessBedrock
 from rag4p.integrations.bedrock.bedrock_answer_generator import BedrockAnswerGenerator
+from rag4p.logging_config import setup_logging
 from rag4p.rag.generation.observed_answer_generator import ObservedAnswerGenerator
 from rag4p.rag.tracker.rag_tracker import global_data
 from rag4p.util.key_loader import KeyLoader
@@ -8,6 +9,7 @@ from rag4p.util.key_loader import KeyLoader
 if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
+    setup_logging()
 
     key_loader = KeyLoader()
 

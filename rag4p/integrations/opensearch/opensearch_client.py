@@ -3,7 +3,7 @@ from datetime import datetime
 
 from opensearchpy import OpenSearch, RequestsHttpConnection
 
-search_log = logging.getLogger("search")
+search_log = logging.getLogger(__name__)
 
 
 class OpenSearchClient:
@@ -15,10 +15,10 @@ class OpenSearchClient:
 
     def ping(self):
         if self.opensearch.ping():
-            print('Connected to OpenSearch')
+            search_log.info('Connected to OpenSearch')
             return True
         else:
-            print('Could not connect to OpenSearch')
+            search_log.info('Could not connect to OpenSearch')
             return False
 
     def create_index(self, provided_alias_name: str = None):
@@ -34,7 +34,7 @@ class OpenSearchClient:
         self.opensearch.indices.delete(index=index_name, ignore_unavailable=True)
         self.opensearch.indices.create(index=index_name)
 
-        print(f'Created a new index with the name {index_name}')
+        search_log.info('Created a new index with the name %s', index_name)
         return index_name
 
     def switch_alias_to(self, index_name: str, provided_alias_name: str = None):
@@ -46,7 +46,7 @@ class OpenSearchClient:
         :return:
         """
         alias_name = self.__get_alias_name(provided_alias_name)
-        print(f'Assign alias {alias_name} to {index_name}')
+        search_log.info('Assign alias %s to %s', alias_name, index_name)
         body = {
             "actions": [
                 {"remove": {"index": f'{alias_name}-*', "alias": alias_name}},
@@ -63,7 +63,7 @@ class OpenSearchClient:
         :param index_name: The index to use for indexing the shoe
         :return:
         """
-        print(f'Indexing item: {id} into index with name {index_name}')
+        search_log.info('Indexing item: %s into index with name %s', id, index_name)
         self.opensearch.index(index=index_name, id=id, body=document)
 
     def search(self, body, explain: bool = False, size: int = 10, index_name: str = None):
@@ -103,7 +103,7 @@ class OpenSearchClient:
         alias_name = provided_alias_name if provided_alias_name is not None else self.default_alias_name
 
         if not alias_name:
-            print("We mandate using aliases for an index. Provided the alias while construction the client"
+            search_log.error("We mandate using aliases for an index. Provided the alias while construction the client"
                             "or provided it with the appropriate function call")
             raise ValueError("We mandate using aliases for an index. Provided the alias while construction the client"
                              "or provided it with the appropriate function call")

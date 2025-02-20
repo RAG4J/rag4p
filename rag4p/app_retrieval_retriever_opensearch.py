@@ -4,12 +4,14 @@ from rag4p.integrations.opensearch.opensearch_client import OpenSearchClient
 from rag4p.integrations.opensearch.opensearch_retriever import OpenSearchRetriever
 from rag4p.integrations.weaviate.access_weaviate import AccessWeaviate
 from rag4p.integrations.weaviate.weaviate_retriever import WeaviateRetriever
+from rag4p.logging_config import setup_logging
 from rag4p.util.key_loader import KeyLoader
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
 
     load_dotenv()
+    setup_logging()
     key_loader = KeyLoader()
 
     opensearch_conn = build_aws_search_service(stack_name=key_loader.get_property("OPENSEARCH_STACK_NAME"),

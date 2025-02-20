@@ -1,9 +1,13 @@
 import csv
+import logging
 import os
 
 from rag4p.rag.retrieval.quality.question_answer_record import QuestionAnswerRecord
 from rag4p.rag.retrieval.quality.retrieval_quality import RetrievalQuality
 from rag4p.rag.retrieval.retriever import Retriever
+
+
+rqs_logger = logging.getLogger(__name__)
 
 
 def obtain_retrieval_quality(question_answer_records: [QuestionAnswerRecord], retriever: Retriever) -> RetrievalQuality:
@@ -24,7 +28,7 @@ def obtain_retrieval_quality(question_answer_records: [QuestionAnswerRecord], re
         else:
             incorrect.append(item.document_id + " " + str(item.chunk_id))
 
-        print(f"Question: {question}, Correct: {correct_answer}")
+        rqs_logger.info("Question: %s, Correct: %s", question, correct_answer)
 
     return RetrievalQuality(correct, incorrect)
 
@@ -46,6 +50,6 @@ def read_question_answers_from_file(file_name: str = "../data/questions_answers.
 
                 questions_answers.append(QuestionAnswerRecord(document_id, chunk_id, chunk_text, question))
         return questions_answers
-    except IOError as e:
-        print("An error occurred while reading from the file.", e)
+    except IOError:
+        rqs_logger.exception("Error while reading file with questions and answers in retrieval_quality_service.read_question_answers_from_file.")
         raise

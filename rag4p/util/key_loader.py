@@ -1,11 +1,15 @@
 import base64
 import configparser
 import os
+import logging
 from configparser import ConfigParser
 
 import requests
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad, pad
+
+
+logger = logging.getLogger(__name__)
 
 
 class KeyLoader:
@@ -48,7 +52,7 @@ class KeyLoader:
             unpadded_data = unpad(decrypted_data, AES.block_size)
             return unpadded_data.decode('utf-8')
         except Exception as e:
-            print(f"There was a problem while decrypting the key: {str(e)}")
+            logger.exception(f"Error decrypting the text in KeyLoader.decrypt.")
             raise
 
     def encrypt(self, str_to_encrypt):
@@ -58,7 +62,7 @@ class KeyLoader:
             encrypted_data = cipher.encrypt(padded_data)
             return base64.b64encode(encrypted_data).decode('utf-8')
         except Exception as e:
-            print(f"There was a problem while encrypting the key: {str(e)}")
+            logger.exception(f"Error encrypting the text in KeyLoader.encrypt.")
             raise
 
     def load_properties_from_remote_file(self, url) -> ConfigParser:
@@ -88,5 +92,5 @@ class KeyLoader:
             return properties
 
         except (requests.RequestException, configparser.Error) as e:
-            print(f"There was a problem while loading the properties file: {str(e)}")
+            logger.exception(f"Problem loading the properties file in KeyLoader.load_properties_from_remote_file.")
             raise

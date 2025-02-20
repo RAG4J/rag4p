@@ -9,11 +9,13 @@ from rag4p.integrations.opensearch.index_components import ComponentTemplate, Co
 from rag4p.integrations.opensearch.opensearch_client import OpenSearchClient
 from rag4p.integrations.opensearch.opensearch_content_store import OpenSearchContentStore
 from rag4p.integrations.opensearch.opensearch_template import OpenSearchTemplate
+from rag4p.logging_config import setup_logging
 from rag4p.util.key_loader import KeyLoader
 from rag4p.vasa_content_reader import VasaContentReader
 
 if __name__ == '__main__':
     load_dotenv()
+    setup_logging()
     key_loader = KeyLoader()
 
     opensearch_conn = build_aws_search_service(stack_name=key_loader.get_property("OPENSEARCH_STACK_NAME"),

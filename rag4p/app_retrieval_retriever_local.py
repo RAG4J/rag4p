@@ -2,6 +2,7 @@ from rag4p.indexing.indexing_service import IndexingService
 from rag4p.indexing.splitters.single_chunk_splitter import SingleChunkSplitter
 from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
+from rag4p.logging_config import setup_logging
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
 from rag4p.vasa_content_reader import VasaContentReader
 
@@ -9,6 +10,7 @@ from rag4p.vasa_content_reader import VasaContentReader
 if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
+    setup_logging()
 
     example_sentences = [
         "How many bolts were replaced?",

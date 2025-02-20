@@ -6,6 +6,7 @@ from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.integrations.openai.openai_question_generator import OpenAIQuestionGenerator
 from rag4p.indexing.input_document import InputDocument
 from rag4p.indexing.splitters.sentence_splitter import SentenceSplitter
+from rag4p.logging_config import setup_logging
 from rag4p.rag.generation.question_generator_service import QuestionGeneratorService
 from rag4p.rag.retrieval.quality.retrieval_quality_service import obtain_retrieval_quality
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
@@ -17,6 +18,7 @@ if __name__ == '__main__':
     from dotenv import load_dotenv
 
     load_dotenv()
+    setup_logging()
 
     key_loader = KeyLoader()
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())

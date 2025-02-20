@@ -1,13 +1,16 @@
+import logging
 import uuid
 
 import weaviate
 import weaviate.classes as wvc
 
 
+c_logger = logging.getLogger(__name__)
+
 class AccessWeaviate:
 
     def __init__(self, url, access_key, openai_api_key: str = None):
-        print(f"Connecting to Weaviate at {url}")
+        c_logger.info("Connecting to Weaviate at %s", url)
         headers = {}
         if openai_api_key:
             headers = {"X-OpenAI-Api-Key": openai_api_key}
@@ -26,7 +29,7 @@ class AccessWeaviate:
         exists = self.client.collections.exists(collection_name)
 
         if not exists:
-            print(f"Collection {collection_name} does not exist")
+            c_logger.info("Collection %s does not exist", collection_name)
 
         return exists
 
@@ -61,10 +64,10 @@ class AccessWeaviate:
 
     def print_meta(self):
         meta = self.client.get_meta()
-        print(f"Version: {meta['version']}")
+        c_logger.info("Version: %s", meta["version"])
         collections = self.client.collections.list_all(simple=False)
         for collection in collections:
-            print(f"Available collection: {collection}")
+            c_logger.info("Available collection: %s", collection)
 
     def obtain_meta(self):
         meta = self.client.get_meta()
@@ -79,10 +82,10 @@ class AccessWeaviate:
         return meta
 
     def query_collection(self, question: str, collection_name: str, max_results: int = 2):
-        print(f"Query collection based on user input {question}")
+        c_logger.info("Query collection based on user input %s", question)
 
         if not collection_name or not self.does_collection_exist(collection_name):
-            print(f"Collection {collection_name} does not exist")
+            c_logger.warning("Collection %s does not exist", collection_name)
             raise Exception(f"Collection {collection_name} does not exist")
 
         collection = self.client.collections.get(name=collection_name)

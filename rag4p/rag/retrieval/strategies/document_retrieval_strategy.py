@@ -1,8 +1,13 @@
+import logging
+
 from rag4p.rag.retrieval.retrieval_strategy import RetrievalStrategy
 from rag4p.rag.retrieval.retriever import Retriever
 from rag4p.rag.retrieval.retrieval_output import RetrievalOutput, RetrievalOutputItem
 from rag4p.rag.model.relevant_chunk import RelevantChunk
 from rag4p.rag.tracker.rag_tracker import global_data
+
+
+drs_logger = logging.getLogger(__name__)
 
 
 class DocumentRetrievalStrategy(RetrievalStrategy):
@@ -57,8 +62,8 @@ class DocumentRetrievalStrategy(RetrievalStrategy):
             retrieval_output_items.append(relevant_item)
 
             if observe:
-                print(f"'{relevant_chunk.get_id()}'")
-                print(f"'{overall_text}'")
+                drs_logger.info(relevant_chunk.get_id())
+                drs_logger.info(overall_text)
                 global_data["observer"].add_relevant_chunk(relevant_chunk.get_id(), overall_text)
 
         return RetrievalOutput(retrieval_output_items)

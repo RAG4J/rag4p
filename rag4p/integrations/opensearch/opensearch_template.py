@@ -1,7 +1,10 @@
+import logging
+
 from rag4p.integrations.opensearch.index_components import ComponentTemplate, ComponentSettings, \
     ComponentDynamicMappings, ComponentMappings, IndexComponent
 from rag4p.integrations.opensearch.opensearch_client import OpenSearchClient
 
+ost_logger = logging.getLogger(__name__)
 
 class OpenSearchTemplate:
 
@@ -19,7 +22,7 @@ class OpenSearchTemplate:
 
     def create_update_template(self) -> list:
         """ Check the version of the current template and update if necessary. """
-        print("Initialize or update the product template in OpenSearch.")
+        ost_logger.info("Initialize or update the product template in OpenSearch.")
 
         return [
             self.__update_component(component=self.component_settings),
@@ -60,11 +63,11 @@ class OpenSearchTemplate:
     def __template_needs_update(self, template_name: str, current_version):
         """ The template needs to update if there is no template or if the versions do not match """
         if not self.client.does_index_template_exist(name=template_name):
-            print(f"The template with name '{template_name}' is not found")
+            ost_logger.info("The template with name '%s' is not found", template_name)
             return True
 
         response = self.client.get_index_template(name=template_name)
-        print(response)
+        ost_logger.debug(response)
 
         templates = response['index_templates']
         if len(templates) != 1:
@@ -75,13 +78,13 @@ class OpenSearchTemplate:
 
     def __component_needs_update(self, component_name: str, current_version):
         """ The template needs to update if there is no template or if the versions do not match """
-        print(f"Obtain the component template with name '{component_name}'")
+        ost_logger.info("Obtain the component template with name '%s'", component_name)
         if not self.client.does_component_template_exist(name=component_name):
-            print(f"The component template with name '{component_name}' is not found")
+            ost_logger.info(f"The component template with name '%s' is not found", component_name)
             return True
 
         response = self.client.get_component_template(name=component_name)
-        print(response)
+        ost_logger.debug(response)
 
         components = response['component_templates']
         if len(components) != 1:

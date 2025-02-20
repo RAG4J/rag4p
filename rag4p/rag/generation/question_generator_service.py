@@ -1,9 +1,11 @@
 import csv
+import logging
 import os
 
 from rag4p.rag.generation.question_generator import QuestionGenerator
 from rag4p.rag.retrieval.retriever import Retriever
 
+qgs_logger = logging.getLogger(__name__)
 
 class QuestionGeneratorService:
 
@@ -14,7 +16,7 @@ class QuestionGeneratorService:
     def generate_question_answer_pairs(self, file_name: str):
         directory = os.getcwd()  # get current working directory
         file_path = os.path.join(directory, "../data", file_name)
-        print(file_path)
+        qgs_logger.info("Load q&a pairs from path: %s", file_path)
         try:
             with open(file_path, 'w', newline='', encoding='utf-8') as file:
                 writer = csv.writer(file)
@@ -27,9 +29,9 @@ class QuestionGeneratorService:
                     document_id = chunk.document_id
                     chunk_id = str(chunk.chunk_id)
                     writer.writerow([document_id, chunk_id, chunk.chunk_text, question])
-                    print(f"Generated question: {question}")
-        except IOError as e:
-            print("An error occurred while writing to the file.", e)
+                    qgs_logger.info("Generated question: %s", question)
+        except IOError:
+            qgs_logger.exception("Error writing to the file in QuestionGeneratorService.generate_question_answer_pairs.")
             raise
 
     def generate_question(self, context: str) -> str:

@@ -1,3 +1,4 @@
+import logging
 import time
 from abc import ABC
 
@@ -6,7 +7,7 @@ from rag4p.indexing.indexing_response import IndexingResponse
 from rag4p.indexing.input_document import InputDocument
 from rag4p.indexing.splitter import Splitter
 from rag4p.rag.store.content_store import ContentStore
-
+c_logger = logging.getLogger(__name__)
 
 class IndexingService(ABC):
     def __init__(self, content_store: ContentStore):
@@ -18,7 +19,7 @@ class IndexingService(ABC):
         num_chunks = 0
         for batch in content_reader.read():
             num_documents += len(batch)
-            print(f"Indexing batch of size {len(batch)}")
+            c_logger.info("Indexing batch of size %d", len(batch))
             for document in batch:
                 doc_chunks = self.index_document(document, splitter)
                 num_chunks += doc_chunks

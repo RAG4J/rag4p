@@ -1,3 +1,5 @@
+import logging
+
 from rag4p.indexing.input_document import InputDocument
 from rag4p.indexing.splitter_chain import SplitterChain
 from rag4p.indexing.splitters.section_splitter import SectionSplitter
@@ -7,6 +9,7 @@ from rag4p.integrations.ollama.access_ollama import AccessOllama
 from rag4p.integrations.ollama.ollama_knowledge_extractor import OllamaKnowledgeExtractor
 from rag4p.integrations.openai.openai_embedder import OpenAIEmbedder
 from rag4p.integrations.openai.openai_knowledge_extractor import OpenaiKnowledgeExtractor
+from rag4p.logging_config import setup_logging
 from rag4p.util.key_loader import KeyLoader
 
 input_text = f"""Ever thought about building your very own question-answering system? Like the one that powers Siri, 
@@ -38,8 +41,9 @@ Some of the highlights of the workshop:
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
-
     load_dotenv()
+    setup_logging()
+    main_logger = logging.getLogger(__name__)
 
     key_loader = KeyLoader()
     embedder = OpenAIEmbedder(api_key=key_loader.get_openai_api_key())
@@ -55,4 +59,4 @@ if __name__ == '__main__':
     chunks = splitter.split(input_document)
 
     for chunk in chunks:
-        print(f"{chunk.chunk_id} ({chunk.total_chunks}): {chunk.chunk_text}")
+        main_logger.info(f"{chunk.chunk_id} ({chunk.total_chunks}): {chunk.chunk_text}")

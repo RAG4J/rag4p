@@ -1,4 +1,5 @@
 from rag4p.integrations.openai.quality.openai_answer_quality_service import OpenAIAnswerQualityService
+from rag4p.logging_config import setup_logging
 from rag4p.rag.tracker.rag_observer import RAGObserver
 from rag4p.util.key_loader import KeyLoader
 
@@ -6,6 +7,7 @@ if __name__ == '__main__':
     from dotenv import load_dotenv
 
     load_dotenv()
+    setup_logging()
 
     question = "Since when was the Vasa available for the public to visit?"
     answer = "The Vasa ship was available for the public to visit since Friday 16 February 1962."

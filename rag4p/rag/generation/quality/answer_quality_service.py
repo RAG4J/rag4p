@@ -1,14 +1,14 @@
 import json
-import os
+import logging
 from abc import ABC, abstractmethod
-
-from openai import OpenAI
 
 from rag4p.rag.generation.chat.chat_prompt import ChatPrompt
 from rag4p.rag.generation.quality.answer_from_context_quality import AnswerFromContextQuality
 from rag4p.rag.generation.quality.answer_quality import AnswerQuality
 from rag4p.rag.generation.quality.answer_to_question_quality import AnswerToQuestionQuality
 from rag4p.rag.tracker.rag_observer import RAGObserver
+
+aqs_logger = logging.getLogger(__name__)
 
 
 class AnswerQualityService(ABC):
@@ -48,7 +48,7 @@ class AnswerQualityService(ABC):
         try:
             response = json.loads(quality_and_reason)
         except json.JSONDecodeError:
-            print(f"Error: Could not decode response from LLM: {quality_and_reason}")
+            aqs_logger.error(f"Error: Could not decode response from LLM: {quality_and_reason}")
             return 0, "PROBLEM"
         return int(response["score"]), response["reason"]
 
@@ -61,7 +61,6 @@ class AnswerQualityService(ABC):
         The question provided after 'question:'. The answer after 'answer:'. Write your answers in json format of: 
         {{"score": "score", "reason": "reason"}}
         An example: {{"score": 3,  "reason": "The answer is correct but some details are missing."}}"""
-
 
     @staticmethod
     def quality_of_answer_from_context_system_prompt():

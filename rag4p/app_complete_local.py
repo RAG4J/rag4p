@@ -8,6 +8,7 @@ from rag4p.integrations.ollama.ollama_answer_generator import OllamaAnswerGenera
 from rag4p.integrations.ollama.ollama_embedder import OllamaEmbedder
 from rag4p.integrations.ollama.ollama_knowledge_extractor import OllamaKnowledgeExtractor
 from rag4p.integrations.ollama.quality.ollama_answer_quality_service import OllamaAnswerQualityService
+from rag4p.logging_config import setup_logging
 from rag4p.rag.generation.observed_answer_generator import ObservedAnswerGenerator
 from rag4p.rag.retrieval.strategies.window_retrieval_strategy import WindowRetrievalStrategy
 from rag4p.rag.store.local.internal_content_store import InternalContentStore
@@ -18,6 +19,7 @@ from rag4p.vasa_content_reader import VasaContentReader
 if __name__ == '__main__':
     from dotenv import load_dotenv
     load_dotenv()
+    setup_logging()
 
     key_loader = KeyLoader()
 

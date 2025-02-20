@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 import json
 import pickle
@@ -12,6 +13,9 @@ from rag4p.rag.embedding.embedder import Embedder
 from rag4p.rag.retrieval.retriever import Retriever
 
 from scipy.spatial import distance
+
+
+icc_logger = logging.getLogger(__name__)
 
 
 class InternalContentStore(ContentStore, Retriever):
@@ -43,18 +47,18 @@ class InternalContentStore(ContentStore, Retriever):
     def __store_chunk(self, chunk: Chunk):
         # Check if chunk.chunk_text has content other than whitespace
         if not chunk.chunk_text.strip():
-            print(f"Chunk {chunk.chunk_id}: '{chunk.chunk_text}' has no content")
+            icc_logger.debug("Chunk %s: '%s' has no content", chunk.chunk_id, chunk.chunk_text)
             return
         chunk_id = chunk.document_id + "_" + str(chunk.chunk_id)
-        print(f"Storing chunk {chunk_id}: {chunk.chunk_text}")
+        icc_logger.debug(f"Storing chunk %s: %s", chunk_id, chunk.chunk_text)
         try:
             embedding = self.embedder.embed(chunk.chunk_text)
             self.vector_store.loc[len(self.vector_store)] = {'chunk_id': chunk_id, 'chunk': chunk, 'embedding': embedding}
-        except Exception as e:
-            print(f"Error storing chunk {chunk_id}-{chunk.chunk_text}: {e}")
+        except Exception:
+            icc_logger.exception(f"Error storing chunk {chunk_id}-{chunk.chunk_text}")
 
     def find_relevant_chunks(self, query: str, max_results: int = 4) -> List[RelevantChunk]:
-        print(f"Finding relevant chunks for query: {query}")
+        icc_logger.info("Finding relevant chunks for query: %s", query)
         embedding = self.embedder.embed(query)
         self.vector_store['distance'] = self.vector_store['embedding'].apply(lambda x: distance.euclidean(x, embedding))
         relevant_chunks_df = self.vector_store.nsmallest(max_results, 'distance')
